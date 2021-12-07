@@ -1,5 +1,19 @@
 # example-app
 
+## 0.2.56
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-components@0.7.7
+  - @backstage/plugin-catalog@0.7.4
+  - @backstage/plugin-scaffolder@0.11.14
+  - @backstage/plugin-kubernetes@0.5.0
+  - @backstage/cli@0.10.1
+  - @backstage/plugin-search@0.5.1
+  - @backstage/plugin-techdocs@0.12.9
+  - @backstage/plugin-catalog-react@0.6.5
+
 ## 0.2.55
 
 ### Patch Changes

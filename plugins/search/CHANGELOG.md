@@ -1,5 +1,14 @@
 # @backstage/plugin-search
 
+## 0.5.1
+
+### Patch Changes
+
+- 382e3a94b3: Export SearchApi interface from plugin
+- Updated dependencies
+  - @backstage/core-components@0.7.7
+  - @backstage/plugin-catalog-react@0.6.5
+
 ## 0.5.0
 
 ### Minor Changes

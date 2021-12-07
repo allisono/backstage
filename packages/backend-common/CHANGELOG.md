@@ -1,5 +1,12 @@
 # @backstage/backend-common
 
+## 0.9.13
+
+### Patch Changes
+
+- 98a9c35f0c: Add options argument to support additional database migrations configuration
+- 6298de32dd: Add knexConfig config section
+
 ## 0.9.12
 
 ### Patch Changes

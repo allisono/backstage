@@ -1,5 +1,16 @@
 # @backstage/plugin-techdocs
 
+## 0.12.9
+
+### Patch Changes
+
+- 3421826ca8: The problem of lowercase entity triplets which causes docs to not load on entity page is fixed.
+- Updated dependencies
+  - @backstage/core-components@0.7.7
+  - @backstage/plugin-catalog@0.7.4
+  - @backstage/plugin-search@0.5.1
+  - @backstage/plugin-catalog-react@0.6.5
+
 ## 0.12.8
 
 ### Patch Changes

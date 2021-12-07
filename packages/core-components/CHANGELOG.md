@@ -1,5 +1,12 @@
 # @backstage/core-components
 
+## 0.7.7
+
+### Patch Changes
+
+- 9603827bb5: Addressed some peer dependency warnings
+- e5976071ea: Use ellipsis style for overflowed text in sidebar menu
+
 ## 0.7.6
 
 ### Patch Changes

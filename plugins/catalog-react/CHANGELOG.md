@@ -1,5 +1,13 @@
 # @backstage/plugin-catalog-react
 
+## 0.6.5
+
+### Patch Changes
+
+- 69034b4419: Fix typo in catalog-react package.json
+- Updated dependencies
+  - @backstage/core-components@0.7.7
+
 ## 0.6.4
 
 ### Patch Changes

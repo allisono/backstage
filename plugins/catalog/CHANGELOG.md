@@ -1,5 +1,14 @@
 # @backstage/plugin-catalog
 
+## 0.7.4
+
+### Patch Changes
+
+- 9603827bb5: Addressed some peer dependency warnings
+- Updated dependencies
+  - @backstage/core-components@0.7.7
+  - @backstage/plugin-catalog-react@0.6.5
+
 ## 0.7.3
 
 ### Patch Changes

@@ -6,7 +6,7 @@ metadata:
 spec:
   type: sub-department
   profile:
-    displayName: Box Office
+    displayName: something something33dd
     email: boxoffice@example.com
     # Intentional no picture for testing
   parent: infrastructure

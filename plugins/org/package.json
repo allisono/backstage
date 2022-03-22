@@ -1,15 +1,10 @@
 {
-  "name": "@backstage/plugin-org",
+  "name": "@tinyspeck/plugin-org",
   "description": "A Backstage plugin that helps you create entity pages for your organization",
   "version": "0.5.4-next.0",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "license": "Apache-2.0",
-  "publishConfig": {
-    "access": "public",
-    "main": "dist/index.esm.js",
-    "types": "dist/index.d.ts"
-  },
   "backstage": {
     "role": "frontend-plugin"
   },
@@ -55,6 +50,9 @@
     "cross-fetch": "^3.1.5",
     "msw": "^0.35.0"
   },
+  "publishConfig": {
+		"registry": "https://slack.jfrog.io/slack/api/npm/npm-registry/"
+	},
   "files": [
     "dist"
   ]

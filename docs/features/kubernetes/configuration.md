@@ -39,6 +39,7 @@ kubernetes:
       region: 'europe-west1'
       skipTLSVerify: true
       skipMetricsLookup: true
+      exposeDashboard: true
 ```
 
 ### `serviceLocatorMethod`
@@ -80,11 +81,12 @@ array. Users will see this value in the Software Catalog Kubernetes plugin.
 This determines how the Kubernetes client authenticates with the Kubernetes
 cluster. Valid values are:
 
-| Value            | Description                                                                                                                                                                                                                       |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `serviceAccount` | This will use a Kubernetes [service account](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/) to access the Kubernetes API. When this is used the `serviceAccountToken` field should also be set. |
-| `google`         | This will use a user's Google auth token from the [Google auth plugin](https://backstage.io/docs/auth/) to access the Kubernetes API.                                                                                             |
-| `aws`            | This will use AWS credentials to access resources in EKS clusters                                                                                                                                                                 |
+| Value                  | Description                                                                                                                                                                                                                       |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `serviceAccount`       | This will use a Kubernetes [service account](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/) to access the Kubernetes API. When this is used the `serviceAccountToken` field should also be set. |
+| `google`               | This will use a user's Google auth token from the [Google auth plugin](https://backstage.io/docs/auth/) to access the Kubernetes API.                                                                                             |
+| `aws`                  | This will use AWS credentials to access resources in EKS clusters                                                                                                                                                                 |
+| `googleServiceAccount` | This will use the Google Cloud service account credentials to access resources in clusters                                                                                                                                        |
 
 ##### `clusters.\*.skipTLSVerify`
 
@@ -113,8 +115,12 @@ kubectl -n <NAMESPACE> get secret $(kubectl -n <NAMESPACE> get sa <SERVICE_ACCOU
 Specifies the link to the Kubernetes dashboard managing this cluster.
 
 Note that you should specify the app used for the dashboard using the
-**dashboardApp property**, in order to properly format links to kubernetes
+`dashboardApp` property, in order to properly format links to kubernetes
 resources, otherwise it will assume that you're running the standard one.
+
+Note also that this attribute is optional for some kinds of dashboards, such as
+GKE, which requires additional parameters specified in the `dashboardParameters`
+option.
 
 ##### `clusters.\*.dashboardApp` (optional)
 
@@ -124,10 +130,13 @@ This will be used for formatting links to kubernetes objects inside the
 dashboard.
 
 The supported dashboards are: `standard`, `rancher`, `openshift`, `gke`, `aks`,
-`eks` However, not all of them are implemented yet, so please contribute!
+`eks`. However, not all of them are implemented yet, so please contribute!
 
 Note that it will default to the regular dashboard provided by the Kubernetes
 project (`standard`), that can run in any Kubernetes cluster.
+
+Note that for the `gke` app, you must provide additional information in the
+`dashboardParameters` option.
 
 Note that you can add your own formatter by registering it to the
 `clusterLinksFormatters` dictionary, in the app project.
@@ -142,6 +151,43 @@ clusterLinksFormatters.myDashboard = (options) => ...;
 See also
 https://github.com/backstage/backstage/tree/master/plugins/kubernetes/src/utils/clusterLinks/formatters
 for real examples.
+
+##### `clusters.\*.dashboardParameters` (optional)
+
+Specifies additional information for the selected `dashboardApp` formatter.
+
+Note that, even though `dashboardParameters` is optional, it might be mandatory
+for some dashboards, such as GKE.
+
+###### required parameters for GKE
+
+| Name        | Description                                                              |
+| ----------- | ------------------------------------------------------------------------ |
+| projectId   | the ID of the GCP project containing your Kubernetes clusters            |
+| region      | the region of GCP containing your Kubernetes clusters                    |
+| clusterName | the name of your kubernetes cluster, within your `projectId` GCP project |
+
+Note that the GKE cluster locator can automatically provide the values for the
+`dashboardApp` and `dashboardParameters` options if you set the
+`exposeDashboard` property to `true`.
+
+Example:
+
+```yaml
+kubernetes:
+  serviceLocatorMethod:
+    type: 'multiTenant'
+  clusterLocatorMethods:
+    - type: 'config'
+      clusters:
+        - url: http://127.0.0.1:9999
+          name: my-cluster
+          dashboardApp: gke
+          dashboardParameters:
+            projectId: my-project
+            region: us-east1
+            clusterName: my-cluster
+```
 
 ##### `clusters.\*.caData` (optional)
 
@@ -184,6 +230,10 @@ For example:
 Will configure the Kubernetes plugin to connect to all GKE clusters in the
 project `gke-clusters` in the region `europe-west1`.
 
+Note that the GKE cluster locator can automatically provide the values for the
+`dashboardApp` and `dashboardParameters` options if you enable the
+`exposeDashboard` option.
+
 ##### `projectId`
 
 The Google Cloud project to look for Kubernetes clusters in.
@@ -202,6 +252,14 @@ presented by the API server. Defaults to `false`.
 
 This determines whether the Kubernetes client looks up resource metrics
 CPU/Memory for pods returned by the API server. Defaults to `false`.
+
+##### `exposeDashboard`
+
+This determines whether the `dashboardApp` and `dashboardParameters` should be
+automatically configured in order to expose the GKE dashboard from the
+Kubernetes plugin.
+
+Defaults to `false`.
 
 ### `customResources` (optional)
 
@@ -264,6 +322,12 @@ following objects:
 - horizontalpodautoscalers
 - ingresses
 
+The following RBAC permissions are required on the batch API group for the
+following objects:
+
+- jobs
+- cronjobs
+
 ## Surfacing your Kubernetes components as part of an entity
 
 There are two ways to surface your Kubernetes components as part of an entity.
@@ -304,5 +368,4 @@ for more info.
 
 [1]: https://cloud.google.com/kubernetes-engine
 [2]: https://cloud.google.com/docs/authentication/production#linux-or-macos
-[3]:
-  https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/
+[3]: https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/

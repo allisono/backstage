@@ -19,7 +19,7 @@ import { RefreshingAuthSessionManager } from '../../../../lib/AuthSessionManager
 import { SessionManager } from '../../../../lib/AuthSessionManager/types';
 import {
   AuthRequestOptions,
-  BackstageIdentity,
+  BackstageIdentityResponse,
   OAuthApi,
   OpenIdConnectApi,
   ProfileInfo,
@@ -48,7 +48,7 @@ export type OAuth2Response = {
     expiresInSeconds: number;
   };
   profile: ProfileInfo;
-  backstageIdentity: BackstageIdentity;
+  backstageIdentity: BackstageIdentityResponse;
 };
 
 const DEFAULT_PROVIDER = {
@@ -70,14 +70,16 @@ export default class OAuth2
     BackstageIdentityApi,
     SessionApi
 {
-  static create({
-    discoveryApi,
-    environment = 'development',
-    provider = DEFAULT_PROVIDER,
-    oauthRequestApi,
-    defaultScopes = [],
-    scopeTransform = x => x,
-  }: OAuth2CreateOptions) {
+  static create(options: OAuth2CreateOptions) {
+    const {
+      discoveryApi,
+      environment = 'development',
+      provider = DEFAULT_PROVIDER,
+      oauthRequestApi,
+      defaultScopes = [],
+      scopeTransform = x => x,
+    } = options;
+
     const connector = new DefaultAuthConnector({
       discoveryApi,
       environment,
@@ -118,10 +120,7 @@ export default class OAuth2
   private readonly sessionManager: SessionManager<OAuth2Session>;
   private readonly scopeTransform: (scopes: string[]) => string[];
 
-  /**
-   * @deprecated will be made private in the future. Use create method instead.
-   */
-  constructor(options: {
+  private constructor(options: {
     sessionManager: SessionManager<OAuth2Session>;
     scopeTransform: (scopes: string[]) => string[];
   }) {
@@ -160,7 +159,7 @@ export default class OAuth2
 
   async getBackstageIdentity(
     options: AuthRequestOptions = {},
-  ): Promise<BackstageIdentity | undefined> {
+  ): Promise<BackstageIdentityResponse | undefined> {
     const session = await this.sessionManager.getSession(options);
     return session?.backstageIdentity;
   }

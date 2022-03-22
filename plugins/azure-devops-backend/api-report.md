@@ -4,29 +4,51 @@
 
 ```ts
 import { Build } from 'azure-devops-node-api/interfaces/BuildInterfaces';
+import { BuildDefinitionReference } from 'azure-devops-node-api/interfaces/BuildInterfaces';
+import { BuildRun } from '@backstage/plugin-azure-devops-common';
 import { Config } from '@backstage/config';
 import { DashboardPullRequest } from '@backstage/plugin-azure-devops-common';
 import express from 'express';
 import { GitRepository } from 'azure-devops-node-api/interfaces/GitInterfaces';
-import { Logger as Logger_2 } from 'winston';
+import { Logger } from 'winston';
 import { PullRequest } from '@backstage/plugin-azure-devops-common';
 import { PullRequestOptions } from '@backstage/plugin-azure-devops-common';
 import { RepoBuild } from '@backstage/plugin-azure-devops-common';
 import { Team } from '@backstage/plugin-azure-devops-common';
+import { TeamMember } from '@backstage/plugin-azure-devops-common';
 import { WebApi } from 'azure-devops-node-api';
 
 // Warning: (ae-missing-release-tag) "AzureDevOpsApi" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
 // @public (undocumented)
 export class AzureDevOpsApi {
-  constructor(logger: Logger_2, webApi: WebApi);
+  constructor(logger: Logger, webApi: WebApi);
   // (undocumented)
   getAllTeams(): Promise<Team[]>;
+  // (undocumented)
+  getBuildDefinitions(
+    projectName: string,
+    definitionName: string,
+  ): Promise<BuildDefinitionReference[]>;
   // (undocumented)
   getBuildList(
     projectName: string,
     repoId: string,
     top: number,
+  ): Promise<Build[]>;
+  // (undocumented)
+  getBuildRuns(
+    projectName: string,
+    top: number,
+    repoName?: string,
+    definitionName?: string,
+  ): Promise<BuildRun[]>;
+  // (undocumented)
+  getBuilds(
+    projectName: string,
+    top: number,
+    repoId?: string,
+    definitions?: number[],
   ): Promise<Build[]>;
   // (undocumented)
   getDashboardPullRequests(
@@ -50,6 +72,14 @@ export class AzureDevOpsApi {
     repoName: string,
     top: number,
   ): Promise<RepoBuild[]>;
+  // (undocumented)
+  getTeamMembers({
+    projectId,
+    teamId,
+  }: {
+    projectId: string;
+    teamId: string;
+  }): Promise<TeamMember[] | undefined>;
 }
 
 // Warning: (ae-missing-release-tag) "createRouter" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
@@ -66,7 +96,7 @@ export interface RouterOptions {
   // (undocumented)
   config: Config;
   // (undocumented)
-  logger: Logger_2;
+  logger: Logger;
 }
 
 // (No @packageDocumentation comment for this package)

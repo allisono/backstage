@@ -9,6 +9,8 @@ import { ApiRef } from '@backstage/core-plugin-api';
 import { BackstageIdentityApi } from '@backstage/core-plugin-api';
 import { BackstagePalette } from '@backstage/theme';
 import { BackstageTheme } from '@backstage/theme';
+import { BackstageUserIdentity } from '@backstage/core-plugin-api';
+import { BottomNavigationActionProps } from '@material-ui/core/BottomNavigationAction';
 import { ButtonProps as ButtonProps_2 } from '@material-ui/core/Button';
 import { CardHeaderProps } from '@material-ui/core/CardHeader';
 import { Column } from '@material-table/core';
@@ -20,13 +22,16 @@ import { CSSProperties } from 'react';
 import { ElementType } from 'react';
 import { ErrorInfo } from 'react';
 import { IconComponent } from '@backstage/core-plugin-api';
+import { IdentityApi } from '@backstage/core-plugin-api';
 import { LinearProgressProps } from '@material-ui/core/LinearProgress';
 import { LinkProps as LinkProps_2 } from '@material-ui/core/Link';
 import { LinkProps as LinkProps_3 } from 'react-router-dom';
 import MaterialBreadcrumbs from '@material-ui/core/Breadcrumbs';
 import { MaterialTableProps } from '@material-table/core';
 import { NavLinkProps } from 'react-router-dom';
+import { Options } from 'react-markdown';
 import { Overrides } from '@material-ui/core/styles/overrides';
+import { ProfileInfo } from '@backstage/core-plugin-api';
 import { ProfileInfoApi } from '@backstage/core-plugin-api';
 import { PropsWithChildren } from 'react';
 import { default as React_2 } from 'react';
@@ -37,7 +42,7 @@ import { SessionApi } from '@backstage/core-plugin-api';
 import { SignInPageProps } from '@backstage/core-plugin-api';
 import { SparklinesLineProps } from 'react-sparklines';
 import { SparklinesProps } from 'react-sparklines';
-import { StyledComponentProps } from '@material-ui/core/styles';
+import { StyledComponentProps } from '@material-ui/core/styles/withStyles';
 import { StyleRules } from '@material-ui/styles';
 import { StyleRules as StyleRules_2 } from '@material-ui/core/styles/withStyles';
 import { TabProps } from '@material-ui/core/Tab';
@@ -85,7 +90,7 @@ export type BackstageOverrides = Overrides & {
 // @public (undocumented)
 export type BoldHeaderClassKey = 'root' | 'title' | 'subheader';
 
-// @public (undocumented)
+// @public
 export function BottomLink(props: BottomLinkProps): JSX.Element;
 
 // @public (undocumented)
@@ -100,8 +105,8 @@ export type BottomLinkProps = {
 
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
-export function Breadcrumbs(props: Props_20): JSX.Element;
+// @public
+export function Breadcrumbs(props: Props_19): JSX.Element;
 
 // @public (undocumented)
 export type BreadcrumbsClickableTextClassKey = 'root';
@@ -111,11 +116,11 @@ export type BreadcrumbsStyledBoxClassKey = 'root';
 
 // Warning: (ae-forgotten-export) The symbol "IconComponentProps" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function BrokenImageIcon(props: IconComponentProps): JSX.Element;
 
 // @public
-export function Button(props: ButtonProps): JSX.Element;
+export const Button: (props: ButtonProps) => JSX.Element;
 
 // @public
 export type ButtonProps = ButtonProps_2 & Omit<LinkProps, 'variant' | 'color'>;
@@ -125,7 +130,7 @@ export type CardActionsTopRightClassKey = 'root';
 
 // Warning: (ae-forgotten-export) The symbol "CardTabProps" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function CardTab(props: PropsWithChildren<CardTabProps>): JSX.Element;
 
 // @public (undocumented)
@@ -147,7 +152,6 @@ export function CodeSnippet(props: CodeSnippetProps): JSX.Element;
 export interface CodeSnippetProps {
   customStyle?: any;
   highlightedNumbers?: number[];
-  // Warning: (tsdoc-reference-missing-identifier) Syntax error in declaration reference: expecting a member identifier
   language: string;
   showCopyCodeButton?: boolean;
   showLineNumbers?: boolean;
@@ -155,14 +159,13 @@ export interface CodeSnippetProps {
 }
 
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
-// Warning: (ae-missing-release-tag) "Content" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
-// @public (undocumented)
+// @public
 export function Content(props: PropsWithChildren<Props_13>): JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "ContentHeaderProps" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function ContentHeader(
   props: PropsWithChildren<ContentHeaderProps>,
 ): JSX.Element;
@@ -306,7 +309,7 @@ export function EmailIcon(props: IconComponentProps): JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function EmptyState(props: Props_2): JSX.Element;
 
 // @public (undocumented)
@@ -328,7 +331,7 @@ export type ErrorBoundaryProps = {
 
 // Warning: (ae-forgotten-export) The symbol "IErrorPageProps" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function ErrorPage(props: IErrorPageProps): JSX.Element;
 
 // @public (undocumented)
@@ -361,7 +364,7 @@ export type FeatureCalloutCircleClassKey =
 
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function FeatureCalloutCircular(
   props: PropsWithChildren<Props_4>,
 ): JSX.Element;
@@ -369,19 +372,24 @@ export function FeatureCalloutCircular(
 // @public (undocumented)
 export type FiltersContainerClassKey = 'root' | 'title';
 
-// @public (undocumented)
+// @public
 export function Gauge(props: GaugeProps): JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function GaugeCard(props: Props_10): JSX.Element;
 
 // @public (undocumented)
 export type GaugeCardClassKey = 'root';
 
 // @public (undocumented)
-export type GaugeClassKey = 'root' | 'overlay' | 'circle' | 'colorUnknown';
+export type GaugeClassKey =
+  | 'root'
+  | 'overlay'
+  | 'description'
+  | 'circle'
+  | 'colorUnknown';
 
 // @public (undocumented)
 export type GaugeProps = {
@@ -390,6 +398,7 @@ export type GaugeProps = {
   inverse?: boolean;
   unit?: string;
   max?: number;
+  description?: ReactNode;
   getColor?: GaugePropsGetColor;
 };
 
@@ -412,7 +421,7 @@ export function GroupIcon(props: IconComponentProps): JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function Header(props: PropsWithChildren<Props_14>): JSX.Element;
 
 // @public (undocumented)
@@ -429,7 +438,7 @@ export type HeaderClassKey =
 
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function HeaderIconLinkRow(props: Props_5): JSX.Element;
 
 // @public (undocumented)
@@ -437,7 +446,7 @@ export type HeaderIconLinkRowClassKey = 'links';
 
 // Warning: (ae-forgotten-export) The symbol "HeaderLabelProps" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function HeaderLabel(props: HeaderLabelProps): JSX.Element;
 
 // @public (undocumented)
@@ -445,7 +454,7 @@ export type HeaderLabelClassKey = 'root' | 'label' | 'value';
 
 // Warning: (ae-forgotten-export) The symbol "HeaderTabsProps" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function HeaderTabs(props: HeaderTabsProps): JSX.Element;
 
 // @public (undocumented)
@@ -463,7 +472,7 @@ export function HomepageTimer(_props: {}): JSX.Element | null;
 
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function HorizontalScrollGrid(
   props: PropsWithChildren<Props_6>,
 ): JSX.Element;
@@ -503,7 +512,7 @@ export type IconLinkVerticalProps = {
 
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function InfoCard(props: Props_15): JSX.Element;
 
 // @public (undocumented)
@@ -521,11 +530,9 @@ export type InfoCardVariants = 'flex' | 'fullHeight' | 'gridItem';
 
 // Warning: (ae-forgotten-export) The symbol "IntroCardProps" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export function IntroCard(props: IntroCardProps): JSX.Element;
 
-// Warning: (tsdoc-malformed-html-name) Invalid HTML element: Expecting an HTML name
-// Warning: (tsdoc-escape-greater-than) The ">" character should be escaped using a backslash to avoid confusion with an HTML tag
 // Warning: (ae-forgotten-export) The symbol "ItemCardProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-missing-release-tag) "ItemCard" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
@@ -587,10 +594,10 @@ export type LifecycleClassKey = 'alpha' | 'beta';
 // @public (undocumented)
 export function LinearGauge(props: Props_11): JSX.Element | null;
 
-// Warning: (ae-missing-release-tag) "LinkType" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+// Warning: (ae-missing-release-tag) "Link" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
-// @public (undocumented)
-export function Link(props: LinkProps): JSX.Element;
+// @public
+export const Link: (props: LinkProps) => JSX.Element;
 
 // Warning: (ae-missing-release-tag) "LinkProps" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
@@ -598,12 +605,57 @@ export function Link(props: LinkProps): JSX.Element;
 export type LinkProps = LinkProps_2 &
   LinkProps_3 & {
     component?: ElementType<any>;
+    noTrack?: boolean;
   };
 
 // Warning: (ae-missing-release-tag) "LoginRequestListItemClassKey" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
 // @public (undocumented)
 export type LoginRequestListItemClassKey = 'root';
+
+// @public
+export function LogViewer(props: LogViewerProps): JSX.Element;
+
+// @public
+export type LogViewerClassKey =
+  | 'root'
+  | 'header'
+  | 'log'
+  | 'line'
+  | 'lineSelected'
+  | 'lineCopyButton'
+  | 'lineNumber'
+  | 'textHighlight'
+  | 'textSelectedHighlight'
+  | 'modifierBold'
+  | 'modifierItalic'
+  | 'modifierUnderline'
+  | 'modifierForegroundBlack'
+  | 'modifierForegroundRed'
+  | 'modifierForegroundGreen'
+  | 'modifierForegroundYellow'
+  | 'modifierForegroundBlue'
+  | 'modifierForegroundMagenta'
+  | 'modifierForegroundCyan'
+  | 'modifierForegroundWhite'
+  | 'modifierForegroundGrey'
+  | 'modifierBackgroundBlack'
+  | 'modifierBackgroundRed'
+  | 'modifierBackgroundGreen'
+  | 'modifierBackgroundYellow'
+  | 'modifierBackgroundBlue'
+  | 'modifierBackgroundMagenta'
+  | 'modifierBackgroundCyan'
+  | 'modifierBackgroundWhite'
+  | 'modifierBackgroundGrey';
+
+// @public
+export interface LogViewerProps {
+  classes?: {
+    root?: string;
+  };
+  text: string;
+}
 
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
 // Warning: (ae-missing-release-tag) "MarkdownContent" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
@@ -652,6 +704,14 @@ export function MissingAnnotationEmptyState(props: Props_3): JSX.Element;
 // @public (undocumented)
 export type MissingAnnotationEmptyStateClassKey = 'code';
 
+// @public
+export const MobileSidebar: (props: MobileSidebarProps) => JSX.Element | null;
+
+// @public
+export type MobileSidebarProps = {
+  children?: React_2.ReactNode;
+};
+
 // Warning: (ae-missing-release-tag) "OAuthRequestDialog" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
 // @public (undocumented)
@@ -686,7 +746,7 @@ export type OverflowTooltipClassKey = 'container';
 // Warning: (ae-missing-release-tag) "Page" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
 // @public (undocumented)
-export function Page(props: PropsWithChildren<Props_16>): JSX.Element;
+export function Page(props: Props_16): JSX.Element;
 
 // Warning: (ae-missing-release-tag) "PageClassKey" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
@@ -707,6 +767,16 @@ export function PageWithHeader(
 export function Progress(
   props: PropsWithChildren<LinearProgressProps>,
 ): JSX.Element;
+
+// @public
+export const ProxiedSignInPage: (
+  props: ProxiedSignInPageProps,
+) => JSX.Element | null;
+
+// @public
+export type ProxiedSignInPageProps = SignInPageProps & {
+  provider: string;
+};
 
 // Warning: (ae-missing-release-tag) "Ranker" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
@@ -766,13 +836,10 @@ export type ResponseErrorPanelClassKey = 'text' | 'divider';
 export function RoutedTabs(props: { routes: SubRoute_2[] }): JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "SelectProps" needs to be exported by the entry point index.d.ts
-// Warning: (ae-missing-release-tag) "SelectComponent" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
 // @public (undocumented)
 export function Select(props: SelectProps): JSX.Element;
 
-// Warning: (ae-missing-release-tag) "SelectClassKey" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
-//
 // @public (undocumented)
 export type SelectClassKey =
   | 'formControl'
@@ -782,16 +849,20 @@ export type SelectClassKey =
   | 'checkbox'
   | 'root';
 
-// Warning: (ae-missing-release-tag) "SelectInputBaseClassKey" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
-//
+// @public (undocumented)
+export type SelectedItems = string | string[] | number | number[];
+
 // @public (undocumented)
 export type SelectInputBaseClassKey = 'root' | 'input';
 
-// Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
-// Warning: (ae-missing-release-tag) "Sidebar" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
-//
 // @public (undocumented)
-export function Sidebar(props: PropsWithChildren<Props_17>): JSX.Element;
+export type SelectItem = {
+  label: string;
+  value: string | number;
+};
+
+// @public
+export const Sidebar: (props: SidebarProps) => JSX.Element;
 
 // Warning: (ae-missing-release-tag) "SIDEBAR_INTRO_LOCAL_STORAGE" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
@@ -799,10 +870,8 @@ export function Sidebar(props: PropsWithChildren<Props_17>): JSX.Element;
 export const SIDEBAR_INTRO_LOCAL_STORAGE =
   '@backstage/core/sidebar-intro-dismissed';
 
-// Warning: (ae-missing-release-tag) "SidebarClassKey" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
-//
 // @public (undocumented)
-export type SidebarClassKey = 'root' | 'drawer' | 'drawerOpen';
+export type SidebarClassKey = 'drawer' | 'drawerOpen';
 
 // Warning: (ae-missing-release-tag) "sidebarConfig" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
@@ -820,16 +889,17 @@ export const sidebarConfig: {
   selectedIndicatorWidth: number;
   userBadgePadding: number;
   userBadgeDiameter: number;
+  mobileSidebarHeight: number;
 };
 
 // Warning: (ae-missing-release-tag) "SidebarContext" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
-// @public (undocumented)
+// @public
 export const SidebarContext: Context<SidebarContextType>;
 
 // Warning: (ae-missing-release-tag) "SidebarContextType" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
-// @public (undocumented)
+// @public
 export type SidebarContextType = {
   isOpen: boolean;
   setOpen: (open: boolean) => void;
@@ -839,273 +909,28 @@ export type SidebarContextType = {
 //
 // @public (undocumented)
 export const SidebarDivider: React_2.ComponentType<
-  Pick<
-    React_2.DetailedHTMLProps<
-      React_2.HTMLAttributes<HTMLHRElement>,
-      HTMLHRElement
-    >,
-    | 'hidden'
-    | 'dir'
-    | 'slot'
-    | 'style'
-    | 'title'
-    | 'color'
-    | 'translate'
-    | 'prefix'
-    | 'children'
-    | 'id'
-    | 'defaultChecked'
-    | 'defaultValue'
-    | 'suppressContentEditableWarning'
-    | 'suppressHydrationWarning'
-    | 'accessKey'
-    | 'contentEditable'
-    | 'contextMenu'
-    | 'draggable'
-    | 'lang'
-    | 'placeholder'
-    | 'spellCheck'
-    | 'tabIndex'
-    | 'radioGroup'
-    | 'role'
-    | 'about'
-    | 'datatype'
-    | 'inlist'
-    | 'property'
-    | 'resource'
-    | 'typeof'
-    | 'vocab'
-    | 'autoCapitalize'
-    | 'autoCorrect'
-    | 'autoSave'
-    | 'itemProp'
-    | 'itemScope'
-    | 'itemType'
-    | 'itemID'
-    | 'itemRef'
-    | 'results'
-    | 'security'
-    | 'unselectable'
-    | 'inputMode'
-    | 'is'
-    | 'aria-activedescendant'
-    | 'aria-atomic'
-    | 'aria-autocomplete'
-    | 'aria-busy'
-    | 'aria-checked'
-    | 'aria-colcount'
-    | 'aria-colindex'
-    | 'aria-colspan'
-    | 'aria-controls'
-    | 'aria-current'
-    | 'aria-describedby'
-    | 'aria-details'
-    | 'aria-disabled'
-    | 'aria-dropeffect'
-    | 'aria-errormessage'
-    | 'aria-expanded'
-    | 'aria-flowto'
-    | 'aria-grabbed'
-    | 'aria-haspopup'
-    | 'aria-hidden'
-    | 'aria-invalid'
-    | 'aria-keyshortcuts'
-    | 'aria-label'
-    | 'aria-labelledby'
-    | 'aria-level'
-    | 'aria-live'
-    | 'aria-modal'
-    | 'aria-multiline'
-    | 'aria-multiselectable'
-    | 'aria-orientation'
-    | 'aria-owns'
-    | 'aria-placeholder'
-    | 'aria-posinset'
-    | 'aria-pressed'
-    | 'aria-readonly'
-    | 'aria-relevant'
-    | 'aria-required'
-    | 'aria-roledescription'
-    | 'aria-rowcount'
-    | 'aria-rowindex'
-    | 'aria-rowspan'
-    | 'aria-selected'
-    | 'aria-setsize'
-    | 'aria-sort'
-    | 'aria-valuemax'
-    | 'aria-valuemin'
-    | 'aria-valuenow'
-    | 'aria-valuetext'
-    | 'dangerouslySetInnerHTML'
-    | 'onCopy'
-    | 'onCopyCapture'
-    | 'onCut'
-    | 'onCutCapture'
-    | 'onPaste'
-    | 'onPasteCapture'
-    | 'onCompositionEnd'
-    | 'onCompositionEndCapture'
-    | 'onCompositionStart'
-    | 'onCompositionStartCapture'
-    | 'onCompositionUpdate'
-    | 'onCompositionUpdateCapture'
-    | 'onFocus'
-    | 'onFocusCapture'
-    | 'onBlur'
-    | 'onBlurCapture'
-    | 'onChange'
-    | 'onChangeCapture'
-    | 'onBeforeInput'
-    | 'onBeforeInputCapture'
-    | 'onInput'
-    | 'onInputCapture'
-    | 'onReset'
-    | 'onResetCapture'
-    | 'onSubmit'
-    | 'onSubmitCapture'
-    | 'onInvalid'
-    | 'onInvalidCapture'
-    | 'onLoad'
-    | 'onLoadCapture'
-    | 'onError'
-    | 'onErrorCapture'
-    | 'onKeyDown'
-    | 'onKeyDownCapture'
-    | 'onKeyPress'
-    | 'onKeyPressCapture'
-    | 'onKeyUp'
-    | 'onKeyUpCapture'
-    | 'onAbort'
-    | 'onAbortCapture'
-    | 'onCanPlay'
-    | 'onCanPlayCapture'
-    | 'onCanPlayThrough'
-    | 'onCanPlayThroughCapture'
-    | 'onDurationChange'
-    | 'onDurationChangeCapture'
-    | 'onEmptied'
-    | 'onEmptiedCapture'
-    | 'onEncrypted'
-    | 'onEncryptedCapture'
-    | 'onEnded'
-    | 'onEndedCapture'
-    | 'onLoadedData'
-    | 'onLoadedDataCapture'
-    | 'onLoadedMetadata'
-    | 'onLoadedMetadataCapture'
-    | 'onLoadStart'
-    | 'onLoadStartCapture'
-    | 'onPause'
-    | 'onPauseCapture'
-    | 'onPlay'
-    | 'onPlayCapture'
-    | 'onPlaying'
-    | 'onPlayingCapture'
-    | 'onProgress'
-    | 'onProgressCapture'
-    | 'onRateChange'
-    | 'onRateChangeCapture'
-    | 'onSeeked'
-    | 'onSeekedCapture'
-    | 'onSeeking'
-    | 'onSeekingCapture'
-    | 'onStalled'
-    | 'onStalledCapture'
-    | 'onSuspend'
-    | 'onSuspendCapture'
-    | 'onTimeUpdate'
-    | 'onTimeUpdateCapture'
-    | 'onVolumeChange'
-    | 'onVolumeChangeCapture'
-    | 'onWaiting'
-    | 'onWaitingCapture'
-    | 'onAuxClick'
-    | 'onAuxClickCapture'
-    | 'onClick'
-    | 'onClickCapture'
-    | 'onContextMenu'
-    | 'onContextMenuCapture'
-    | 'onDoubleClick'
-    | 'onDoubleClickCapture'
-    | 'onDrag'
-    | 'onDragCapture'
-    | 'onDragEnd'
-    | 'onDragEndCapture'
-    | 'onDragEnter'
-    | 'onDragEnterCapture'
-    | 'onDragExit'
-    | 'onDragExitCapture'
-    | 'onDragLeave'
-    | 'onDragLeaveCapture'
-    | 'onDragOver'
-    | 'onDragOverCapture'
-    | 'onDragStart'
-    | 'onDragStartCapture'
-    | 'onDrop'
-    | 'onDropCapture'
-    | 'onMouseDown'
-    | 'onMouseDownCapture'
-    | 'onMouseEnter'
-    | 'onMouseLeave'
-    | 'onMouseMove'
-    | 'onMouseMoveCapture'
-    | 'onMouseOut'
-    | 'onMouseOutCapture'
-    | 'onMouseOver'
-    | 'onMouseOverCapture'
-    | 'onMouseUp'
-    | 'onMouseUpCapture'
-    | 'onSelect'
-    | 'onSelectCapture'
-    | 'onTouchCancel'
-    | 'onTouchCancelCapture'
-    | 'onTouchEnd'
-    | 'onTouchEndCapture'
-    | 'onTouchMove'
-    | 'onTouchMoveCapture'
-    | 'onTouchStart'
-    | 'onTouchStartCapture'
-    | 'onPointerDown'
-    | 'onPointerDownCapture'
-    | 'onPointerMove'
-    | 'onPointerMoveCapture'
-    | 'onPointerUp'
-    | 'onPointerUpCapture'
-    | 'onPointerCancel'
-    | 'onPointerCancelCapture'
-    | 'onPointerEnter'
-    | 'onPointerEnterCapture'
-    | 'onPointerLeave'
-    | 'onPointerLeaveCapture'
-    | 'onPointerOver'
-    | 'onPointerOverCapture'
-    | 'onPointerOut'
-    | 'onPointerOutCapture'
-    | 'onGotPointerCapture'
-    | 'onGotPointerCaptureCapture'
-    | 'onLostPointerCapture'
-    | 'onLostPointerCaptureCapture'
-    | 'onScroll'
-    | 'onScrollCapture'
-    | 'onWheel'
-    | 'onWheelCapture'
-    | 'onAnimationStart'
-    | 'onAnimationStartCapture'
-    | 'onAnimationEnd'
-    | 'onAnimationEndCapture'
-    | 'onAnimationIteration'
-    | 'onAnimationIterationCapture'
-    | 'onTransitionEnd'
-    | 'onTransitionEndCapture'
-    | keyof React_2.ClassAttributes<HTMLHRElement>
-  > &
-    StyledComponentProps<'root'> & {
-      className?: string | undefined;
-    }
+  React_2.ClassAttributes<HTMLHRElement> &
+    React_2.HTMLAttributes<HTMLHRElement> &
+    StyledComponentProps<'root'>
 >;
+
+// Warning: (ae-missing-release-tag) "SidebarDividerClassKey" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+//
+// @public (undocumented)
+export type SidebarDividerClassKey = 'root';
 
 // @public
 export const SidebarExpandButton: () => JSX.Element | null;
+
+// @public
+export const SidebarGroup: (props: SidebarGroupProps) => JSX.Element;
+
+// @public
+export interface SidebarGroupProps extends BottomNavigationActionProps {
+  children?: React_2.ReactNode;
+  priority?: number;
+  to?: string;
+}
 
 // Warning: (ae-missing-release-tag) "SidebarIntro" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
@@ -1123,19 +948,17 @@ export type SidebarIntroClassKey =
 // Warning: (ae-forgotten-export) The symbol "SidebarItemProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-missing-release-tag) "SidebarItem" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
-// @public (undocumented)
-export const SidebarItem: React_2.ForwardRefExoticComponent<
-  SidebarItemProps & React_2.RefAttributes<any>
->;
+// @public
+export const SidebarItem: (props: SidebarItemProps) => JSX.Element;
 
-// Warning: (ae-missing-release-tag) "SidebarItemClassKey" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
-//
 // @public (undocumented)
 export type SidebarItemClassKey =
   | 'root'
   | 'buttonItem'
   | 'closed'
   | 'open'
+  | 'highlightable'
+  | 'highlighted'
   | 'label'
   | 'iconContainer'
   | 'searchRoot'
@@ -1143,298 +966,52 @@ export type SidebarItemClassKey =
   | 'searchFieldHTMLInput'
   | 'searchContainer'
   | 'secondaryAction'
+  | 'closedItemIcon'
+  | 'submenuArrow'
+  | 'expandButton'
+  | 'arrows'
   | 'selected';
 
 // Warning: (ae-missing-release-tag) "SidebarPage" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
 // @public (undocumented)
-export function SidebarPage(props: PropsWithChildren<{}>): JSX.Element;
+export function SidebarPage(props: SidebarPageProps): JSX.Element;
 
 // Warning: (ae-missing-release-tag) "SidebarPageClassKey" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
 // @public (undocumented)
 export type SidebarPageClassKey = 'root';
 
-// Warning: (ae-missing-release-tag) "SidebarPinStateContext" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
-//
-// @public (undocumented)
+// @public
+export type SidebarPageProps = {
+  children?: React_2.ReactNode;
+};
+
+// @public
 export const SidebarPinStateContext: React_2.Context<SidebarPinStateContextType>;
 
-// Warning: (ae-missing-release-tag) "SidebarPinStateContextType" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
-//
-// @public (undocumented)
+// @public
 export type SidebarPinStateContextType = {
   isPinned: boolean;
   toggleSidebarPinState: () => any;
+  isMobile?: boolean;
+};
+
+// @public (undocumented)
+export type SidebarProps = {
+  openDelayMs?: number;
+  closeDelayMs?: number;
+  disableExpandOnHover?: boolean;
+  children?: React_2.ReactNode;
 };
 
 // Warning: (ae-missing-release-tag) "SidebarScrollWrapper" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
 // @public (undocumented)
 export const SidebarScrollWrapper: React_2.ComponentType<
-  Pick<
-    React_2.DetailedHTMLProps<
-      React_2.HTMLAttributes<HTMLDivElement>,
-      HTMLDivElement
-    >,
-    | 'hidden'
-    | 'dir'
-    | 'slot'
-    | 'style'
-    | 'title'
-    | 'color'
-    | 'translate'
-    | 'prefix'
-    | 'children'
-    | 'id'
-    | 'defaultChecked'
-    | 'defaultValue'
-    | 'suppressContentEditableWarning'
-    | 'suppressHydrationWarning'
-    | 'accessKey'
-    | 'contentEditable'
-    | 'contextMenu'
-    | 'draggable'
-    | 'lang'
-    | 'placeholder'
-    | 'spellCheck'
-    | 'tabIndex'
-    | 'radioGroup'
-    | 'role'
-    | 'about'
-    | 'datatype'
-    | 'inlist'
-    | 'property'
-    | 'resource'
-    | 'typeof'
-    | 'vocab'
-    | 'autoCapitalize'
-    | 'autoCorrect'
-    | 'autoSave'
-    | 'itemProp'
-    | 'itemScope'
-    | 'itemType'
-    | 'itemID'
-    | 'itemRef'
-    | 'results'
-    | 'security'
-    | 'unselectable'
-    | 'inputMode'
-    | 'is'
-    | 'aria-activedescendant'
-    | 'aria-atomic'
-    | 'aria-autocomplete'
-    | 'aria-busy'
-    | 'aria-checked'
-    | 'aria-colcount'
-    | 'aria-colindex'
-    | 'aria-colspan'
-    | 'aria-controls'
-    | 'aria-current'
-    | 'aria-describedby'
-    | 'aria-details'
-    | 'aria-disabled'
-    | 'aria-dropeffect'
-    | 'aria-errormessage'
-    | 'aria-expanded'
-    | 'aria-flowto'
-    | 'aria-grabbed'
-    | 'aria-haspopup'
-    | 'aria-hidden'
-    | 'aria-invalid'
-    | 'aria-keyshortcuts'
-    | 'aria-label'
-    | 'aria-labelledby'
-    | 'aria-level'
-    | 'aria-live'
-    | 'aria-modal'
-    | 'aria-multiline'
-    | 'aria-multiselectable'
-    | 'aria-orientation'
-    | 'aria-owns'
-    | 'aria-placeholder'
-    | 'aria-posinset'
-    | 'aria-pressed'
-    | 'aria-readonly'
-    | 'aria-relevant'
-    | 'aria-required'
-    | 'aria-roledescription'
-    | 'aria-rowcount'
-    | 'aria-rowindex'
-    | 'aria-rowspan'
-    | 'aria-selected'
-    | 'aria-setsize'
-    | 'aria-sort'
-    | 'aria-valuemax'
-    | 'aria-valuemin'
-    | 'aria-valuenow'
-    | 'aria-valuetext'
-    | 'dangerouslySetInnerHTML'
-    | 'onCopy'
-    | 'onCopyCapture'
-    | 'onCut'
-    | 'onCutCapture'
-    | 'onPaste'
-    | 'onPasteCapture'
-    | 'onCompositionEnd'
-    | 'onCompositionEndCapture'
-    | 'onCompositionStart'
-    | 'onCompositionStartCapture'
-    | 'onCompositionUpdate'
-    | 'onCompositionUpdateCapture'
-    | 'onFocus'
-    | 'onFocusCapture'
-    | 'onBlur'
-    | 'onBlurCapture'
-    | 'onChange'
-    | 'onChangeCapture'
-    | 'onBeforeInput'
-    | 'onBeforeInputCapture'
-    | 'onInput'
-    | 'onInputCapture'
-    | 'onReset'
-    | 'onResetCapture'
-    | 'onSubmit'
-    | 'onSubmitCapture'
-    | 'onInvalid'
-    | 'onInvalidCapture'
-    | 'onLoad'
-    | 'onLoadCapture'
-    | 'onError'
-    | 'onErrorCapture'
-    | 'onKeyDown'
-    | 'onKeyDownCapture'
-    | 'onKeyPress'
-    | 'onKeyPressCapture'
-    | 'onKeyUp'
-    | 'onKeyUpCapture'
-    | 'onAbort'
-    | 'onAbortCapture'
-    | 'onCanPlay'
-    | 'onCanPlayCapture'
-    | 'onCanPlayThrough'
-    | 'onCanPlayThroughCapture'
-    | 'onDurationChange'
-    | 'onDurationChangeCapture'
-    | 'onEmptied'
-    | 'onEmptiedCapture'
-    | 'onEncrypted'
-    | 'onEncryptedCapture'
-    | 'onEnded'
-    | 'onEndedCapture'
-    | 'onLoadedData'
-    | 'onLoadedDataCapture'
-    | 'onLoadedMetadata'
-    | 'onLoadedMetadataCapture'
-    | 'onLoadStart'
-    | 'onLoadStartCapture'
-    | 'onPause'
-    | 'onPauseCapture'
-    | 'onPlay'
-    | 'onPlayCapture'
-    | 'onPlaying'
-    | 'onPlayingCapture'
-    | 'onProgress'
-    | 'onProgressCapture'
-    | 'onRateChange'
-    | 'onRateChangeCapture'
-    | 'onSeeked'
-    | 'onSeekedCapture'
-    | 'onSeeking'
-    | 'onSeekingCapture'
-    | 'onStalled'
-    | 'onStalledCapture'
-    | 'onSuspend'
-    | 'onSuspendCapture'
-    | 'onTimeUpdate'
-    | 'onTimeUpdateCapture'
-    | 'onVolumeChange'
-    | 'onVolumeChangeCapture'
-    | 'onWaiting'
-    | 'onWaitingCapture'
-    | 'onAuxClick'
-    | 'onAuxClickCapture'
-    | 'onClick'
-    | 'onClickCapture'
-    | 'onContextMenu'
-    | 'onContextMenuCapture'
-    | 'onDoubleClick'
-    | 'onDoubleClickCapture'
-    | 'onDrag'
-    | 'onDragCapture'
-    | 'onDragEnd'
-    | 'onDragEndCapture'
-    | 'onDragEnter'
-    | 'onDragEnterCapture'
-    | 'onDragExit'
-    | 'onDragExitCapture'
-    | 'onDragLeave'
-    | 'onDragLeaveCapture'
-    | 'onDragOver'
-    | 'onDragOverCapture'
-    | 'onDragStart'
-    | 'onDragStartCapture'
-    | 'onDrop'
-    | 'onDropCapture'
-    | 'onMouseDown'
-    | 'onMouseDownCapture'
-    | 'onMouseEnter'
-    | 'onMouseLeave'
-    | 'onMouseMove'
-    | 'onMouseMoveCapture'
-    | 'onMouseOut'
-    | 'onMouseOutCapture'
-    | 'onMouseOver'
-    | 'onMouseOverCapture'
-    | 'onMouseUp'
-    | 'onMouseUpCapture'
-    | 'onSelect'
-    | 'onSelectCapture'
-    | 'onTouchCancel'
-    | 'onTouchCancelCapture'
-    | 'onTouchEnd'
-    | 'onTouchEndCapture'
-    | 'onTouchMove'
-    | 'onTouchMoveCapture'
-    | 'onTouchStart'
-    | 'onTouchStartCapture'
-    | 'onPointerDown'
-    | 'onPointerDownCapture'
-    | 'onPointerMove'
-    | 'onPointerMoveCapture'
-    | 'onPointerUp'
-    | 'onPointerUpCapture'
-    | 'onPointerCancel'
-    | 'onPointerCancelCapture'
-    | 'onPointerEnter'
-    | 'onPointerEnterCapture'
-    | 'onPointerLeave'
-    | 'onPointerLeaveCapture'
-    | 'onPointerOver'
-    | 'onPointerOverCapture'
-    | 'onPointerOut'
-    | 'onPointerOutCapture'
-    | 'onGotPointerCapture'
-    | 'onGotPointerCaptureCapture'
-    | 'onLostPointerCapture'
-    | 'onLostPointerCaptureCapture'
-    | 'onScroll'
-    | 'onScrollCapture'
-    | 'onWheel'
-    | 'onWheelCapture'
-    | 'onAnimationStart'
-    | 'onAnimationStartCapture'
-    | 'onAnimationEnd'
-    | 'onAnimationEndCapture'
-    | 'onAnimationIteration'
-    | 'onAnimationIterationCapture'
-    | 'onTransitionEnd'
-    | 'onTransitionEndCapture'
-    | keyof React_2.ClassAttributes<HTMLDivElement>
-  > &
-    StyledComponentProps<'root'> & {
-      className?: string | undefined;
-    }
+  React_2.ClassAttributes<HTMLDivElement> &
+    React_2.HTMLAttributes<HTMLDivElement> &
+    StyledComponentProps<'root'>
 >;
 
 // Warning: (ae-forgotten-export) The symbol "SidebarSearchFieldProps" needs to be exported by the entry point index.d.ts
@@ -1447,545 +1024,32 @@ export function SidebarSearchField(props: SidebarSearchFieldProps): JSX.Element;
 //
 // @public (undocumented)
 export const SidebarSpace: React_2.ComponentType<
-  Pick<
-    React_2.DetailedHTMLProps<
-      React_2.HTMLAttributes<HTMLDivElement>,
-      HTMLDivElement
-    >,
-    | 'hidden'
-    | 'dir'
-    | 'slot'
-    | 'style'
-    | 'title'
-    | 'color'
-    | 'translate'
-    | 'prefix'
-    | 'children'
-    | 'id'
-    | 'defaultChecked'
-    | 'defaultValue'
-    | 'suppressContentEditableWarning'
-    | 'suppressHydrationWarning'
-    | 'accessKey'
-    | 'contentEditable'
-    | 'contextMenu'
-    | 'draggable'
-    | 'lang'
-    | 'placeholder'
-    | 'spellCheck'
-    | 'tabIndex'
-    | 'radioGroup'
-    | 'role'
-    | 'about'
-    | 'datatype'
-    | 'inlist'
-    | 'property'
-    | 'resource'
-    | 'typeof'
-    | 'vocab'
-    | 'autoCapitalize'
-    | 'autoCorrect'
-    | 'autoSave'
-    | 'itemProp'
-    | 'itemScope'
-    | 'itemType'
-    | 'itemID'
-    | 'itemRef'
-    | 'results'
-    | 'security'
-    | 'unselectable'
-    | 'inputMode'
-    | 'is'
-    | 'aria-activedescendant'
-    | 'aria-atomic'
-    | 'aria-autocomplete'
-    | 'aria-busy'
-    | 'aria-checked'
-    | 'aria-colcount'
-    | 'aria-colindex'
-    | 'aria-colspan'
-    | 'aria-controls'
-    | 'aria-current'
-    | 'aria-describedby'
-    | 'aria-details'
-    | 'aria-disabled'
-    | 'aria-dropeffect'
-    | 'aria-errormessage'
-    | 'aria-expanded'
-    | 'aria-flowto'
-    | 'aria-grabbed'
-    | 'aria-haspopup'
-    | 'aria-hidden'
-    | 'aria-invalid'
-    | 'aria-keyshortcuts'
-    | 'aria-label'
-    | 'aria-labelledby'
-    | 'aria-level'
-    | 'aria-live'
-    | 'aria-modal'
-    | 'aria-multiline'
-    | 'aria-multiselectable'
-    | 'aria-orientation'
-    | 'aria-owns'
-    | 'aria-placeholder'
-    | 'aria-posinset'
-    | 'aria-pressed'
-    | 'aria-readonly'
-    | 'aria-relevant'
-    | 'aria-required'
-    | 'aria-roledescription'
-    | 'aria-rowcount'
-    | 'aria-rowindex'
-    | 'aria-rowspan'
-    | 'aria-selected'
-    | 'aria-setsize'
-    | 'aria-sort'
-    | 'aria-valuemax'
-    | 'aria-valuemin'
-    | 'aria-valuenow'
-    | 'aria-valuetext'
-    | 'dangerouslySetInnerHTML'
-    | 'onCopy'
-    | 'onCopyCapture'
-    | 'onCut'
-    | 'onCutCapture'
-    | 'onPaste'
-    | 'onPasteCapture'
-    | 'onCompositionEnd'
-    | 'onCompositionEndCapture'
-    | 'onCompositionStart'
-    | 'onCompositionStartCapture'
-    | 'onCompositionUpdate'
-    | 'onCompositionUpdateCapture'
-    | 'onFocus'
-    | 'onFocusCapture'
-    | 'onBlur'
-    | 'onBlurCapture'
-    | 'onChange'
-    | 'onChangeCapture'
-    | 'onBeforeInput'
-    | 'onBeforeInputCapture'
-    | 'onInput'
-    | 'onInputCapture'
-    | 'onReset'
-    | 'onResetCapture'
-    | 'onSubmit'
-    | 'onSubmitCapture'
-    | 'onInvalid'
-    | 'onInvalidCapture'
-    | 'onLoad'
-    | 'onLoadCapture'
-    | 'onError'
-    | 'onErrorCapture'
-    | 'onKeyDown'
-    | 'onKeyDownCapture'
-    | 'onKeyPress'
-    | 'onKeyPressCapture'
-    | 'onKeyUp'
-    | 'onKeyUpCapture'
-    | 'onAbort'
-    | 'onAbortCapture'
-    | 'onCanPlay'
-    | 'onCanPlayCapture'
-    | 'onCanPlayThrough'
-    | 'onCanPlayThroughCapture'
-    | 'onDurationChange'
-    | 'onDurationChangeCapture'
-    | 'onEmptied'
-    | 'onEmptiedCapture'
-    | 'onEncrypted'
-    | 'onEncryptedCapture'
-    | 'onEnded'
-    | 'onEndedCapture'
-    | 'onLoadedData'
-    | 'onLoadedDataCapture'
-    | 'onLoadedMetadata'
-    | 'onLoadedMetadataCapture'
-    | 'onLoadStart'
-    | 'onLoadStartCapture'
-    | 'onPause'
-    | 'onPauseCapture'
-    | 'onPlay'
-    | 'onPlayCapture'
-    | 'onPlaying'
-    | 'onPlayingCapture'
-    | 'onProgress'
-    | 'onProgressCapture'
-    | 'onRateChange'
-    | 'onRateChangeCapture'
-    | 'onSeeked'
-    | 'onSeekedCapture'
-    | 'onSeeking'
-    | 'onSeekingCapture'
-    | 'onStalled'
-    | 'onStalledCapture'
-    | 'onSuspend'
-    | 'onSuspendCapture'
-    | 'onTimeUpdate'
-    | 'onTimeUpdateCapture'
-    | 'onVolumeChange'
-    | 'onVolumeChangeCapture'
-    | 'onWaiting'
-    | 'onWaitingCapture'
-    | 'onAuxClick'
-    | 'onAuxClickCapture'
-    | 'onClick'
-    | 'onClickCapture'
-    | 'onContextMenu'
-    | 'onContextMenuCapture'
-    | 'onDoubleClick'
-    | 'onDoubleClickCapture'
-    | 'onDrag'
-    | 'onDragCapture'
-    | 'onDragEnd'
-    | 'onDragEndCapture'
-    | 'onDragEnter'
-    | 'onDragEnterCapture'
-    | 'onDragExit'
-    | 'onDragExitCapture'
-    | 'onDragLeave'
-    | 'onDragLeaveCapture'
-    | 'onDragOver'
-    | 'onDragOverCapture'
-    | 'onDragStart'
-    | 'onDragStartCapture'
-    | 'onDrop'
-    | 'onDropCapture'
-    | 'onMouseDown'
-    | 'onMouseDownCapture'
-    | 'onMouseEnter'
-    | 'onMouseLeave'
-    | 'onMouseMove'
-    | 'onMouseMoveCapture'
-    | 'onMouseOut'
-    | 'onMouseOutCapture'
-    | 'onMouseOver'
-    | 'onMouseOverCapture'
-    | 'onMouseUp'
-    | 'onMouseUpCapture'
-    | 'onSelect'
-    | 'onSelectCapture'
-    | 'onTouchCancel'
-    | 'onTouchCancelCapture'
-    | 'onTouchEnd'
-    | 'onTouchEndCapture'
-    | 'onTouchMove'
-    | 'onTouchMoveCapture'
-    | 'onTouchStart'
-    | 'onTouchStartCapture'
-    | 'onPointerDown'
-    | 'onPointerDownCapture'
-    | 'onPointerMove'
-    | 'onPointerMoveCapture'
-    | 'onPointerUp'
-    | 'onPointerUpCapture'
-    | 'onPointerCancel'
-    | 'onPointerCancelCapture'
-    | 'onPointerEnter'
-    | 'onPointerEnterCapture'
-    | 'onPointerLeave'
-    | 'onPointerLeaveCapture'
-    | 'onPointerOver'
-    | 'onPointerOverCapture'
-    | 'onPointerOut'
-    | 'onPointerOutCapture'
-    | 'onGotPointerCapture'
-    | 'onGotPointerCaptureCapture'
-    | 'onLostPointerCapture'
-    | 'onLostPointerCaptureCapture'
-    | 'onScroll'
-    | 'onScrollCapture'
-    | 'onWheel'
-    | 'onWheelCapture'
-    | 'onAnimationStart'
-    | 'onAnimationStartCapture'
-    | 'onAnimationEnd'
-    | 'onAnimationEndCapture'
-    | 'onAnimationIteration'
-    | 'onAnimationIterationCapture'
-    | 'onTransitionEnd'
-    | 'onTransitionEndCapture'
-    | keyof React_2.ClassAttributes<HTMLDivElement>
-  > &
-    StyledComponentProps<'root'> & {
-      className?: string | undefined;
-    }
+  React_2.ClassAttributes<HTMLDivElement> &
+    React_2.HTMLAttributes<HTMLDivElement> &
+    StyledComponentProps<'root'>
 >;
+
+// Warning: (ae-missing-release-tag) "SidebarSpaceClassKey" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+//
+// @public (undocumented)
+export type SidebarSpaceClassKey = 'root';
 
 // Warning: (ae-missing-release-tag) "SidebarSpacer" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
 // @public (undocumented)
 export const SidebarSpacer: React_2.ComponentType<
-  Pick<
-    React_2.DetailedHTMLProps<
-      React_2.HTMLAttributes<HTMLDivElement>,
-      HTMLDivElement
-    >,
-    | 'hidden'
-    | 'dir'
-    | 'slot'
-    | 'style'
-    | 'title'
-    | 'color'
-    | 'translate'
-    | 'prefix'
-    | 'children'
-    | 'id'
-    | 'defaultChecked'
-    | 'defaultValue'
-    | 'suppressContentEditableWarning'
-    | 'suppressHydrationWarning'
-    | 'accessKey'
-    | 'contentEditable'
-    | 'contextMenu'
-    | 'draggable'
-    | 'lang'
-    | 'placeholder'
-    | 'spellCheck'
-    | 'tabIndex'
-    | 'radioGroup'
-    | 'role'
-    | 'about'
-    | 'datatype'
-    | 'inlist'
-    | 'property'
-    | 'resource'
-    | 'typeof'
-    | 'vocab'
-    | 'autoCapitalize'
-    | 'autoCorrect'
-    | 'autoSave'
-    | 'itemProp'
-    | 'itemScope'
-    | 'itemType'
-    | 'itemID'
-    | 'itemRef'
-    | 'results'
-    | 'security'
-    | 'unselectable'
-    | 'inputMode'
-    | 'is'
-    | 'aria-activedescendant'
-    | 'aria-atomic'
-    | 'aria-autocomplete'
-    | 'aria-busy'
-    | 'aria-checked'
-    | 'aria-colcount'
-    | 'aria-colindex'
-    | 'aria-colspan'
-    | 'aria-controls'
-    | 'aria-current'
-    | 'aria-describedby'
-    | 'aria-details'
-    | 'aria-disabled'
-    | 'aria-dropeffect'
-    | 'aria-errormessage'
-    | 'aria-expanded'
-    | 'aria-flowto'
-    | 'aria-grabbed'
-    | 'aria-haspopup'
-    | 'aria-hidden'
-    | 'aria-invalid'
-    | 'aria-keyshortcuts'
-    | 'aria-label'
-    | 'aria-labelledby'
-    | 'aria-level'
-    | 'aria-live'
-    | 'aria-modal'
-    | 'aria-multiline'
-    | 'aria-multiselectable'
-    | 'aria-orientation'
-    | 'aria-owns'
-    | 'aria-placeholder'
-    | 'aria-posinset'
-    | 'aria-pressed'
-    | 'aria-readonly'
-    | 'aria-relevant'
-    | 'aria-required'
-    | 'aria-roledescription'
-    | 'aria-rowcount'
-    | 'aria-rowindex'
-    | 'aria-rowspan'
-    | 'aria-selected'
-    | 'aria-setsize'
-    | 'aria-sort'
-    | 'aria-valuemax'
-    | 'aria-valuemin'
-    | 'aria-valuenow'
-    | 'aria-valuetext'
-    | 'dangerouslySetInnerHTML'
-    | 'onCopy'
-    | 'onCopyCapture'
-    | 'onCut'
-    | 'onCutCapture'
-    | 'onPaste'
-    | 'onPasteCapture'
-    | 'onCompositionEnd'
-    | 'onCompositionEndCapture'
-    | 'onCompositionStart'
-    | 'onCompositionStartCapture'
-    | 'onCompositionUpdate'
-    | 'onCompositionUpdateCapture'
-    | 'onFocus'
-    | 'onFocusCapture'
-    | 'onBlur'
-    | 'onBlurCapture'
-    | 'onChange'
-    | 'onChangeCapture'
-    | 'onBeforeInput'
-    | 'onBeforeInputCapture'
-    | 'onInput'
-    | 'onInputCapture'
-    | 'onReset'
-    | 'onResetCapture'
-    | 'onSubmit'
-    | 'onSubmitCapture'
-    | 'onInvalid'
-    | 'onInvalidCapture'
-    | 'onLoad'
-    | 'onLoadCapture'
-    | 'onError'
-    | 'onErrorCapture'
-    | 'onKeyDown'
-    | 'onKeyDownCapture'
-    | 'onKeyPress'
-    | 'onKeyPressCapture'
-    | 'onKeyUp'
-    | 'onKeyUpCapture'
-    | 'onAbort'
-    | 'onAbortCapture'
-    | 'onCanPlay'
-    | 'onCanPlayCapture'
-    | 'onCanPlayThrough'
-    | 'onCanPlayThroughCapture'
-    | 'onDurationChange'
-    | 'onDurationChangeCapture'
-    | 'onEmptied'
-    | 'onEmptiedCapture'
-    | 'onEncrypted'
-    | 'onEncryptedCapture'
-    | 'onEnded'
-    | 'onEndedCapture'
-    | 'onLoadedData'
-    | 'onLoadedDataCapture'
-    | 'onLoadedMetadata'
-    | 'onLoadedMetadataCapture'
-    | 'onLoadStart'
-    | 'onLoadStartCapture'
-    | 'onPause'
-    | 'onPauseCapture'
-    | 'onPlay'
-    | 'onPlayCapture'
-    | 'onPlaying'
-    | 'onPlayingCapture'
-    | 'onProgress'
-    | 'onProgressCapture'
-    | 'onRateChange'
-    | 'onRateChangeCapture'
-    | 'onSeeked'
-    | 'onSeekedCapture'
-    | 'onSeeking'
-    | 'onSeekingCapture'
-    | 'onStalled'
-    | 'onStalledCapture'
-    | 'onSuspend'
-    | 'onSuspendCapture'
-    | 'onTimeUpdate'
-    | 'onTimeUpdateCapture'
-    | 'onVolumeChange'
-    | 'onVolumeChangeCapture'
-    | 'onWaiting'
-    | 'onWaitingCapture'
-    | 'onAuxClick'
-    | 'onAuxClickCapture'
-    | 'onClick'
-    | 'onClickCapture'
-    | 'onContextMenu'
-    | 'onContextMenuCapture'
-    | 'onDoubleClick'
-    | 'onDoubleClickCapture'
-    | 'onDrag'
-    | 'onDragCapture'
-    | 'onDragEnd'
-    | 'onDragEndCapture'
-    | 'onDragEnter'
-    | 'onDragEnterCapture'
-    | 'onDragExit'
-    | 'onDragExitCapture'
-    | 'onDragLeave'
-    | 'onDragLeaveCapture'
-    | 'onDragOver'
-    | 'onDragOverCapture'
-    | 'onDragStart'
-    | 'onDragStartCapture'
-    | 'onDrop'
-    | 'onDropCapture'
-    | 'onMouseDown'
-    | 'onMouseDownCapture'
-    | 'onMouseEnter'
-    | 'onMouseLeave'
-    | 'onMouseMove'
-    | 'onMouseMoveCapture'
-    | 'onMouseOut'
-    | 'onMouseOutCapture'
-    | 'onMouseOver'
-    | 'onMouseOverCapture'
-    | 'onMouseUp'
-    | 'onMouseUpCapture'
-    | 'onSelect'
-    | 'onSelectCapture'
-    | 'onTouchCancel'
-    | 'onTouchCancelCapture'
-    | 'onTouchEnd'
-    | 'onTouchEndCapture'
-    | 'onTouchMove'
-    | 'onTouchMoveCapture'
-    | 'onTouchStart'
-    | 'onTouchStartCapture'
-    | 'onPointerDown'
-    | 'onPointerDownCapture'
-    | 'onPointerMove'
-    | 'onPointerMoveCapture'
-    | 'onPointerUp'
-    | 'onPointerUpCapture'
-    | 'onPointerCancel'
-    | 'onPointerCancelCapture'
-    | 'onPointerEnter'
-    | 'onPointerEnterCapture'
-    | 'onPointerLeave'
-    | 'onPointerLeaveCapture'
-    | 'onPointerOver'
-    | 'onPointerOverCapture'
-    | 'onPointerOut'
-    | 'onPointerOutCapture'
-    | 'onGotPointerCapture'
-    | 'onGotPointerCaptureCapture'
-    | 'onLostPointerCapture'
-    | 'onLostPointerCaptureCapture'
-    | 'onScroll'
-    | 'onScrollCapture'
-    | 'onWheel'
-    | 'onWheelCapture'
-    | 'onAnimationStart'
-    | 'onAnimationStartCapture'
-    | 'onAnimationEnd'
-    | 'onAnimationEndCapture'
-    | 'onAnimationIteration'
-    | 'onAnimationIterationCapture'
-    | 'onTransitionEnd'
-    | 'onTransitionEndCapture'
-    | keyof React_2.ClassAttributes<HTMLDivElement>
-  > &
-    StyledComponentProps<'root'> & {
-      className?: string | undefined;
-    }
+  React_2.ClassAttributes<HTMLDivElement> &
+    React_2.HTMLAttributes<HTMLDivElement> &
+    StyledComponentProps<'root'>
 >;
 
+// Warning: (ae-missing-release-tag) "SidebarSpacerClassKey" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+//
+// @public (undocumented)
+export type SidebarSpacerClassKey = 'root';
+
 // @public
-export const SidebarSubmenu: ({
-  title,
-  children,
-}: PropsWithChildren<SidebarSubmenuProps>) => JSX.Element;
+export const SidebarSubmenu: (props: SidebarSubmenuProps) => JSX.Element;
 
 // @public
 export const SidebarSubmenuItem: (
@@ -2016,7 +1080,7 @@ export type SidebarSubmenuProps = {
 // Warning: (ae-missing-release-tag) "SignInPage" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
 // @public (undocumented)
-export function SignInPage(props: Props_18): JSX.Element;
+export function SignInPage(props: Props_17): JSX.Element;
 
 // Warning: (ae-missing-release-tag) "SignInPageClassKey" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
@@ -2187,7 +1251,7 @@ export type TabBarClassKey = 'indicator' | 'flexContainer' | 'root';
 // Warning: (ae-missing-release-tag) "TabbedCard" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
 // @public (undocumented)
-export function TabbedCard(props: PropsWithChildren<Props_19>): JSX.Element;
+export function TabbedCard(props: PropsWithChildren<Props_18>): JSX.Element;
 
 // Warning: (ae-missing-release-tag) "TabbedCardClassKey" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
@@ -2305,6 +1369,12 @@ export function TrendLine(
     },
 ): JSX.Element | null;
 
+// @public
+export function useContent(): {
+  focusContent: () => void;
+  contentRef: React_2.MutableRefObject<HTMLElement | null> | undefined;
+};
+
 // Warning: (ae-forgotten-export) The symbol "SetQueryParams" needs to be exported by the entry point index.d.ts
 // Warning: (ae-missing-release-tag) "useQueryParamState" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
@@ -2317,6 +1387,38 @@ export function useQueryParamState<T>(
 // @public (undocumented)
 export function UserIcon(props: IconComponentProps): JSX.Element;
 
+// @public
+export class UserIdentity implements IdentityApi {
+  static create(options: {
+    identity: BackstageUserIdentity;
+    authApi: ProfileInfoApi & BackstageIdentityApi & SessionApi;
+    profile?: ProfileInfo;
+  }): IdentityApi;
+  static createGuest(): IdentityApi;
+  static fromLegacy(result: {
+    userId: string;
+    profile: ProfileInfo;
+    getIdToken?: () => Promise<string>;
+    signOut?: () => Promise<void>;
+  }): IdentityApi;
+  // (undocumented)
+  getBackstageIdentity(): Promise<BackstageUserIdentity>;
+  // (undocumented)
+  getCredentials(): Promise<{
+    token?: string | undefined;
+  }>;
+  // (undocumented)
+  getIdToken(): Promise<string | undefined>;
+  // (undocumented)
+  getProfile(): ProfileInfo;
+  // (undocumented)
+  getProfileInfo(): Promise<ProfileInfo>;
+  // (undocumented)
+  getUserId(): string;
+  // (undocumented)
+  signOut(): Promise<void>;
+}
+
 // Warning: (ae-missing-release-tag) "useSupportConfig" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
 // @public (undocumented)
@@ -2325,18 +1427,6 @@ export function useSupportConfig(): SupportConfig;
 // @public (undocumented)
 export function WarningIcon(props: IconComponentProps): JSX.Element;
 
-// Warning: (tsdoc-param-tag-missing-hyphen) The @param block should be followed by a parameter name and then a hyphen
-// Warning: (tsdoc-param-tag-with-invalid-optional-name) The @param should not include a JSDoc-style optional name; it must not be enclosed in '[ ]' brackets.
-// Warning: (tsdoc-param-tag-with-invalid-type) The @param block should not include a JSDoc-style '{type}'
-// Warning: (tsdoc-param-tag-missing-hyphen) The @param block should be followed by a parameter name and then a hyphen
-// Warning: (tsdoc-param-tag-with-invalid-optional-name) The @param should not include a JSDoc-style optional name; it must not be enclosed in '[ ]' brackets.
-// Warning: (tsdoc-param-tag-with-invalid-type) The @param block should not include a JSDoc-style '{type}'
-// Warning: (tsdoc-param-tag-missing-hyphen) The @param block should be followed by a parameter name and then a hyphen
-// Warning: (tsdoc-param-tag-with-invalid-optional-name) The @param should not include a JSDoc-style optional name; it must not be enclosed in '[ ]' brackets.
-// Warning: (tsdoc-param-tag-with-invalid-type) The @param block should not include a JSDoc-style '{type}'
-// Warning: (tsdoc-param-tag-missing-hyphen) The @param block should be followed by a parameter name and then a hyphen
-// Warning: (tsdoc-param-tag-with-invalid-optional-name) The @param should not include a JSDoc-style optional name; it must not be enclosed in '[ ]' brackets.
-// Warning: (tsdoc-param-tag-with-invalid-type) The @param block should not include a JSDoc-style '{type}'
 // Warning: (ae-forgotten-export) The symbol "WarningProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-missing-release-tag) "WarningPanel" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //

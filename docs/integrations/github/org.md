@@ -19,21 +19,7 @@ entities that mirror your org setup.
 
 ## Installation
 
-The processor that performs the import, `GithubOrgReaderProcessor`, comes
-installed with the default setup of Backstage.
-
-If you have _replaced_ the set of processors in your installation using
-`replaceProcessors`, you can import and add it as follows:
-
-```ts
-// Typically in packages/backend/src/plugins/catalog.ts
-import { GithubOrgReaderProcessor } from '@backstage/plugin-catalog-backend';
-
-builder.replaceProcessors(
-  GithubOrgReaderProcessor.fromConfig(config, { logger }),
-  // ...
-);
-```
+See the [discovery](discovery.md) article for installation instructions.
 
 ## Configuration
 
@@ -51,10 +37,12 @@ If Backstage is configured to use GitHub Apps authentication you must grant
 `Read-Only` access for `Members` under `Organization` in order to ingest users
 correctly. You can modify the app's permissions under the organization settings,
 `https://github.com/organizations/{ORG}/settings/apps/{APP_NAME}/permissions`.
+
 ![permissions](../../assets/integrations/github/permissions.png)
 
 **Please note that when you change permissions, the app owner will get an email
 that must be approved first before the changes are applied.**
+
 ![email](../../assets/integrations/github/email.png)
 
 Locations point out the specific org(s) you want to import. The `type` of these
@@ -65,3 +53,22 @@ The authorization for loading org information comes from a configured
 [GitHub integration](locations.md#configuration). When using a personal access
 token, the token needs to have at least the scopes `read:org`, `read:user`, and
 `user:email` in the given `target`.
+
+## Addendum
+
+Some Backstage apps have _replaced_ the catalog processors to override the
+default catalog processing behavior. These apps will already have a call to
+`replaceProcessors` in the catalog initialization.
+
+In the unlikely scenario that this applies to your app, you can import and
+add the `GithubOrgReaderProcessor` as follows:
+
+```ts
+// Typically in packages/backend/src/plugins/catalog.ts
+import { GithubOrgReaderProcessor } from '@backstage/plugin-catalog-backend';
+
+builder.replaceProcessors(
+  // ... other processor replacements
+  GithubOrgReaderProcessor.fromConfig(env.config, { logger: env.logger }),
+);
+```

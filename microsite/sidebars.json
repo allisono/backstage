@@ -1,4 +1,7 @@
 {
+  "releases": {
+    "Release Notes": ["releases/v1.0.0"]
+  },
   "docs": {
     "Overview": [
       "overview/what-is-backstage",
@@ -7,13 +10,14 @@
       "overview/vision",
       "overview/background",
       "overview/adopting",
-      "overview/stability-index",
+      "overview/versioning-policy",
       "overview/support",
       "overview/glossary",
       "overview/logos"
     ],
     "Getting Started": [
       "getting-started/index",
+      "getting-started/configuration",
       "getting-started/create-an-app",
       "getting-started/running-backstage-locally",
       {
@@ -21,7 +25,8 @@
         "label": "App configuration",
         "ids": [
           "getting-started/configure-app-with-plugins",
-          "getting-started/app-custom-theme"
+          "getting-started/app-custom-theme",
+          "getting-started/homepage"
         ]
       },
       "getting-started/keeping-backstage-updated",
@@ -33,7 +38,11 @@
       {
         "type": "subcategory",
         "label": "CLI",
-        "ids": ["local-dev/cli-overview", "local-dev/cli-commands"]
+        "ids": [
+          "local-dev/cli-overview",
+          "local-dev/cli-build-system",
+          "local-dev/cli-commands"
+        ]
       },
       "local-dev/linking-local-packages"
     ],
@@ -201,7 +210,6 @@
         "type": "subcategory",
         "label": "Publishing",
         "ids": [
-          "plugins/publishing",
           "plugins/publish-private",
           "plugins/add-to-marketplace",
           "plugins/observability"
@@ -228,7 +236,8 @@
           "auth/gitlab/provider",
           "auth/google/provider",
           "auth/okta/provider",
-          "auth/onelogin/provider"
+          "auth/onelogin/provider",
+          "auth/oauth2-proxy/provider"
         ]
       },
       "auth/add-auth-provider",
@@ -267,10 +276,12 @@
     "Tutorials": [
       "tutorials/journey",
       "tutorials/quickstart-app-plugin",
+      "tutorials/package-role-migration",
       "tutorials/migrating-away-from-core",
       "tutorials/configuring-plugin-databases",
       "tutorials/switching-sqlite-postgres",
-      "tutorials/using-backstage-proxy-within-plugin"
+      "tutorials/using-backstage-proxy-within-plugin",
+      "tutorials/backend-to-backend-auth"
     ],
     "Architecture Decision Records (ADRs)": [
       "architecture-decisions/adrs-overview",
@@ -285,7 +296,8 @@
       "architecture-decisions/adrs-adr009",
       "architecture-decisions/adrs-adr010",
       "architecture-decisions/adrs-adr011",
-      "architecture-decisions/adrs-adr012"
+      "architecture-decisions/adrs-adr012",
+      "architecture-decisions/adrs-adr013"
     ],
     "FAQ": ["FAQ"]
   }

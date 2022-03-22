@@ -83,9 +83,21 @@ export class ConfigReader implements Config {
     // Merge together all configs into a single config with recursive fallback
     // readers, giving the first config object in the array the lowest priority.
     return configs.reduce<ConfigReader>(
-      (previousReader, { data, context, filteredKeys }) => {
+      (previousReader, { data, context, filteredKeys, deprecatedKeys }) => {
         const reader = new ConfigReader(data, context, previousReader);
         reader.filteredKeys = filteredKeys;
+
+        if (deprecatedKeys) {
+          for (const { key, description } of deprecatedKeys) {
+            // eslint-disable-next-line no-console
+            console.warn(
+              `The configuration key '${key}' of ${context} is deprecated and may be removed soon. ${
+                description || ''
+              }`,
+            );
+          }
+        }
+
         return reader;
       },
       undefined!,
@@ -126,7 +138,7 @@ export class ConfigReader implements Config {
 
   /** {@inheritdoc Config.getOptional} */
   getOptional<T = JsonValue>(key?: string): T | undefined {
-    const value = this.readValue(key);
+    const value = cloneDeep(this.readValue(key));
     const fallbackValue = this.fallback?.getOptional<T>(key);
 
     if (value === undefined) {
@@ -153,11 +165,8 @@ export class ConfigReader implements Config {
 
     // Avoid merging arrays and primitive values, since that's how merging works for other
     // methods for reading config.
-    return mergeWith(
-      {},
-      { value: cloneDeep(fallbackValue) },
-      { value },
-      (into, from) => (!isObject(from) || !isObject(into) ? from : undefined),
+    return mergeWith({}, { value: fallbackValue }, { value }, (into, from) =>
+      !isObject(from) || !isObject(into) ? from : undefined,
     ).value as T;
   }
 

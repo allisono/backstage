@@ -63,7 +63,13 @@ export const containerStatuses = (pod: V1Pod): ReactNode => {
     const renderCell = (reason: string | undefined) => (
       <Fragment key={`${pod.metadata?.name}-${next.name}`}>
         <SubvalueCell
-          value={<StatusError>Container: {next.name}</StatusError>}
+          value={
+            reason === 'Completed' ? (
+              <StatusOK>Container: {next.name}</StatusOK>
+            ) : (
+              <StatusError>Container: {next.name}</StatusError>
+            )
+          }
           subvalue={reason}
         />
         <br />
@@ -112,6 +118,8 @@ export const currentToDeclaredResourceToPerc = (
   current: number | string,
   resource: number | string,
 ): string => {
+  if (Number(resource) === 0) return `0%`;
+
   if (typeof current === 'number' && typeof resource === 'number') {
     return `${Math.round((current / resource) * 100)}%`;
   }

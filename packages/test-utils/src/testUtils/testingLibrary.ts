@@ -15,8 +15,7 @@
  */
 
 import { ReactElement } from 'react';
-import { act } from 'react-dom/test-utils';
-import { render, RenderResult } from '@testing-library/react';
+import { act, render, RenderResult } from '@testing-library/react';
 
 /**
  * @public
@@ -37,6 +36,5 @@ export async function renderWithEffects(
   await act(async () => {
     value = render(nodes);
   });
-  // @ts-ignore
-  return value;
+  return value!;
 }

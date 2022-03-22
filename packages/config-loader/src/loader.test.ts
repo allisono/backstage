@@ -118,9 +118,7 @@ describe('loadConfig', () => {
     await expect(
       loadConfig({
         configRoot: '/root',
-        configPaths: [],
         configTargets: [],
-        env: 'production',
       }),
     ).resolves.toEqual({
       appConfigs: [
@@ -146,9 +144,7 @@ describe('loadConfig', () => {
     await expect(
       loadConfig({
         configRoot: '/root',
-        configPaths: [],
         configTargets: [{ url: configUrl }],
-        env: 'production',
         remote: {
           reloadIntervalSeconds: 30,
         },
@@ -173,9 +169,10 @@ describe('loadConfig', () => {
     await expect(
       loadConfig({
         configRoot: '/root',
-        configPaths: ['/root/app-config2.yaml'],
-        configTargets: [{ path: '/root/app-config.yaml' }],
-        env: 'production',
+        configTargets: [
+          { path: '/root/app-config.yaml' },
+          { path: '/root/app-config2.yaml' },
+        ],
       }),
     ).resolves.toEqual({
       appConfigs: [
@@ -207,9 +204,7 @@ describe('loadConfig', () => {
     await expect(
       loadConfig({
         configRoot: '/root',
-        configPaths: ['/root/app-config.yaml'],
         configTargets: [{ path: '/root/app-config.yaml' }],
-        env: 'production',
       }),
     ).resolves.toEqual({
       appConfigs: [
@@ -231,12 +226,10 @@ describe('loadConfig', () => {
     await expect(
       loadConfig({
         configRoot: '/root',
-        configPaths: [],
         configTargets: [
           { path: '/root/app-config.yaml' },
           { path: '/root/app-config.development.yaml' },
         ],
-        env: 'development',
       }),
     ).resolves.toEqual({
       appConfigs: [
@@ -274,9 +267,7 @@ describe('loadConfig', () => {
     await expect(
       loadConfig({
         configRoot: '/root',
-        configPaths: [],
         configTargets: [{ path: '/root/app-config.substitute.yaml' }],
-        env: 'development',
       }),
     ).resolves.toEqual({
       appConfigs: [
@@ -302,7 +293,6 @@ describe('loadConfig', () => {
     await expect(
       loadConfig({
         configRoot: '/root',
-        configPaths: [],
         configTargets: [],
         watch: {
           onChange: onChange.resolve,
@@ -343,6 +333,66 @@ describe('loadConfig', () => {
     stopSignal.resolve();
   });
 
+  it('watches included files', async () => {
+    const onChange = defer<AppConfig[]>();
+    const stopSignal = defer<void>();
+
+    await expect(
+      loadConfig({
+        configRoot: '/root',
+        configTargets: [{ path: '/root/app-config.development.yaml' }],
+        watch: {
+          onChange: onChange.resolve,
+          stopSignal: stopSignal.promise,
+        },
+      }),
+    ).resolves.toEqual({
+      appConfigs: [
+        {
+          context: 'app-config.development.yaml',
+          data: {
+            app: {
+              sessionKey: 'development-key',
+            },
+            backend: {
+              foo: {
+                bar: 'token is-secret',
+              },
+            },
+            other: {
+              secret: 'abc123',
+            },
+          },
+        },
+      ],
+    });
+
+    // session-key is indirectly included in app-config.development.yaml
+    // via included.yaml
+    await fs.writeFile('/root/secrets/session-key.txt', 'abc234');
+
+    await expect(onChange.promise).resolves.toEqual([
+      {
+        context: 'app-config.development.yaml',
+        data: {
+          app: {
+            sessionKey: 'development-key',
+          },
+          backend: {
+            foo: {
+              bar: 'token is-secret',
+            },
+          },
+          other: {
+            secret: 'abc234',
+          },
+        },
+      },
+    ]);
+
+    stopSignal.resolve();
+  });
+
   it('watches remote config urls', async () => {
     server.use(initialLoaderHandler);
 
@@ -353,7 +403,6 @@ describe('loadConfig', () => {
     await expect(
       loadConfig({
         configRoot: '/root',
-        configPaths: [],
         configTargets: [{ url: configUrl }],
         watch: {
           onChange: onChange.resolve,
@@ -401,7 +450,6 @@ describe('loadConfig', () => {
 
     await loadConfig({
       configRoot: '/root',
-      configPaths: [],
       configTargets: [],
       watch: {
         onChange: () => {

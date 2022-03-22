@@ -79,6 +79,9 @@ plugins:
   - techdocs-core
 ```
 
+> Note - The plugins section above is optional. Backstage automatically adds the `techdocs-core` plugin to the
+> mkdocs file if it is missing. This functionality can be turned off with a [configuration option](./configuration.md) in Backstage.
+
 Update your component's entity description by adding the following lines to its
 `catalog-info.yaml` in the root of its repository:
 
@@ -114,7 +117,7 @@ updated documentation next time you run Backstage!
 
 ## Writing and previewing your documentation
 
-Using the [techdocs-cli](https://github.com/backstage/techdocs-cli) you can
+Using the [techdocs-cli](https://github.com/backstage/backstage/tree/master/packages/techdocs-cli) you can
 preview your docs inside a local Backstage instance and get live reload on
 changes. This is useful when you want to preview your documentation while
 writing.

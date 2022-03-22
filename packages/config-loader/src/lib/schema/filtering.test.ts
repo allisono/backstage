@@ -64,6 +64,13 @@ const visibility = new Map<string, ConfigVisibility>(
   }),
 );
 
+const deprecations = new Map<string, string>(
+  Object.entries({
+    '/arr': 'deprecated array',
+    '/objB/never': 'deprecated nested property',
+  }),
+);
+
 describe('filterByVisibility', () => {
   test.each<[ConfigVisibility[], JsonObject]>([
     [
@@ -185,8 +192,33 @@ describe('filterByVisibility', () => {
     [['frontend', 'backend', 'secret'], { data, filteredKeys: [] }],
   ])('should filter correctly with %p', (filter, expected) => {
     expect(
-      filterByVisibility(data, filter, visibility, undefined, true),
+      filterByVisibility(
+        data,
+        filter,
+        visibility,
+        deprecations,
+        undefined,
+        true,
+        false,
+      ),
     ).toEqual(expected);
+  });
+
+  it('should include deprecated keys regardless of visibility', () => {
+    expect(
+      filterByVisibility(
+        data,
+        [],
+        visibility,
+        deprecations,
+        undefined,
+        true,
+        true,
+      ).deprecatedKeys,
+    ).toEqual([
+      { key: 'arr', description: 'deprecated array' },
+      { key: 'objB.never', description: 'deprecated nested property' },
+    ]);
   });
 });
 
@@ -212,21 +244,21 @@ describe('filterErrorsByVisibility', () => {
     const errors = [
       {
         keyword: 'something',
-        dataPath: '/a',
+        instancePath: '/a',
         schemaPath: '#/properties/a/something',
         params: {},
         message: 'a',
       },
       {
         keyword: 'something',
-        dataPath: '/b',
+        instancePath: '/b',
         schemaPath: '#/properties/b/something',
         params: {},
         message: 'b',
       },
       {
         keyword: 'something',
-        dataPath: '/c',
+        instancePath: '/c',
         schemaPath: '#/properties/c/something',
         params: {},
         message: 'c',
@@ -282,35 +314,35 @@ describe('filterErrorsByVisibility', () => {
     const errors = [
       {
         keyword: 'type',
-        dataPath: '/a',
+        instancePath: '/a',
         schemaPath: '#/properties/a/type',
         params: { type: 'number' },
         message: 'a',
       },
       {
         keyword: 'type',
-        dataPath: '/b',
+        instancePath: '/b',
         schemaPath: '#/properties/b/type',
         params: { type: 'string' },
         message: 'b',
       },
       {
         keyword: 'type',
-        dataPath: '/c',
+        instancePath: '/c',
         schemaPath: '#/properties/c/type',
         params: { type: 'array' },
         message: 'c',
       },
       {
         keyword: 'type',
-        dataPath: '/c',
+        instancePath: '/c',
         schemaPath: '#/properties/c/type',
         params: { type: 'object' },
         message: 'd',
       },
       {
         keyword: 'type',
-        dataPath: '/c',
+        instancePath: '/c',
         schemaPath: '#/properties/c/type',
         params: { type: 'null' },
         message: 'e',
@@ -341,21 +373,21 @@ describe('filterErrorsByVisibility', () => {
     const errors = [
       {
         keyword: 'required',
-        dataPath: '/a',
+        instancePath: '/a',
         schemaPath: '#/properties/o/required',
         params: { missingProperty: 'a' },
         message: 'a',
       },
       {
         keyword: 'required',
-        dataPath: '/b',
+        instancePath: '/b',
         schemaPath: '#/properties/o/required',
         params: { missingProperty: 'b' },
         message: 'b',
       },
       {
         keyword: 'required',
-        dataPath: '/c',
+        instancePath: '/c',
         schemaPath: '#/properties/o/required',
         params: { missingProperty: 'c' },
         message: 'c',

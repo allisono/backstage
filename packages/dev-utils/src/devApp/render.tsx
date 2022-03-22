@@ -148,7 +148,7 @@ export class DevAppBuilder {
   }
 
   /**
-   * Adds an array of themes to overide the default theme.
+   * Adds an array of themes to override the default theme.
    */
   addThemes(themes: AppTheme[]) {
     this.themes = themes;
@@ -159,7 +159,7 @@ export class DevAppBuilder {
    * Build a DevApp component using the resources registered so far
    */
   build(): ComponentType<{}> {
-    const dummyRouteRef = createRouteRef({ title: 'Page of another plugin' });
+    const dummyRouteRef = createRouteRef({ id: 'dummy' });
     const DummyPage = () => <Box p={3}>Page belonging to another plugin.</Box>;
     attachComponentData(DummyPage, 'core.mountPoint', dummyRouteRef);
 

@@ -18,13 +18,12 @@ import { ComponentType } from 'react';
 import {
   AnyApiFactory,
   AppTheme,
-  ProfileInfo,
   IconComponent,
   BackstagePlugin,
   RouteRef,
   SubRouteRef,
   ExternalRouteRef,
-  PluginOutput,
+  IdentityApi,
 } from '@backstage/core-plugin-api';
 import { AppConfig } from '@backstage/config';
 
@@ -39,39 +38,15 @@ export type BootErrorPageProps = {
 };
 
 /**
- * The outcome of signing in on the sign-in page.
- *
- * @public
- */
-export type SignInResult = {
-  /**
-   * User ID that will be returned by the IdentityApi
-   */
-  userId: string;
-
-  profile: ProfileInfo;
-
-  /**
-   * Function used to retrieve an ID token for the signed in user.
-   */
-  getIdToken?: () => Promise<string>;
-
-  /**
-   * Sign out handler that will be called if the user requests to sign out.
-   */
-  signOut?: () => Promise<void>;
-};
-
-/**
  * Props for the `SignInPage` component of {@link AppComponents}.
  *
  * @public
  */
 export type SignInPageProps = {
   /**
-   * Set the sign-in result for the app. This should only be called once.
+   * Set the IdentityApi on successful sign in. This should only be called once.
    */
-  onResult(result: SignInResult): void;
+  onSignInSuccess(identityApi: IdentityApi): void;
 };
 
 /**
@@ -187,7 +162,7 @@ type TargetRouteMap<
 
 /**
  * A function that can bind from external routes of a given plugin, to concrete
- * routes of other plugins. See {@link createApp}.
+ * routes of other plugins. See {@link createSpecializedApp}.
  *
  * @public
  */
@@ -202,30 +177,7 @@ export type AppRouteBinder = <
 ) => void;
 
 /**
- * Internal helper type that represents a plugin with any type of output.
- *
- * @public
- * @remarks
- * @deprecated Will be removed
- *
- * The `type: string` type is there to handle output from newer or older plugin
- * API versions that might not be supported by this version of the app API, but
- * we don't want to break at the type checking level. We only use this more
- * permissive type for the `createApp` options, as we otherwise want to stick
- * to using the type for the outputs that we know about in this version of the
- * app api.
- *
- * TODO(freben): This should be marked internal but that's not supported by the api report generation tools yet
- */
-export type BackstagePluginWithAnyOutput = Omit<
-  BackstagePlugin<any, any>,
-  'output'
-> & {
-  output(): (PluginOutput | { type: string })[];
-};
-
-/**
- * The options accepted by {@link createApp}.
+ * The options accepted by {@link createSpecializedApp}.
  *
  * @public
  */
@@ -238,7 +190,7 @@ export type AppOptions = {
 
   /**
    * A collection of ApiFactories to register in the application as default APIs.
-   * Theses APIs can not be overridden by plugin factories, but can be overridden
+   * These APIs cannot be overridden by plugin factories, but can be overridden
    * by plugin APIs provided through the
    * A collection of ApiFactories to register in the application to either
    * add new ones, or override factories provided by default or by plugins.
@@ -253,9 +205,13 @@ export type AppOptions = {
   /**
    * A list of all plugins to include in the app.
    */
-  plugins?: (Omit<BackstagePlugin<any, any>, 'output'> & {
-    output(): (PluginOutput | { type: string })[];
-  })[];
+  plugins?: Array<
+    BackstagePlugin<any, any> & {
+      output?(): Array<
+        { type: 'feature-flag'; name: string } | { type: string }
+      >; // support for old plugins
+    }
+  >;
 
   /**
    * Supply components to the app to override the default ones.
@@ -327,7 +283,7 @@ export type AppOptions = {
 };
 
 /**
- * The public API of the output of {@link createApp}.
+ * The public API of the output of {@link createSpecializedApp}.
  *
  * @public
  */

@@ -1,4 +1,9 @@
-# TechDocs CLI
+---
+id: cli
+title: TechDocs CLI
+# prettier-ignore
+description: TechDocs CLI - a utility command line interface for managing TechDocs sites in Backstage.
+---
 
 Utility command line interface for managing TechDocs sites in
 [Backstage](https://github.com/backstage/backstage).
@@ -92,7 +97,7 @@ techdocs-cli generate
 Alias: `techdocs-cli build`
 
 The generate command uses the
-[`@backstage/techdocs-common`](https://github.com/backstage/backstage/tree/master/packages/techdocs-common)
+[`@backstage/plugin-techdocs-node`](https://github.com/backstage/backstage/tree/master/plugins/techdocs-node)
 package from Backstage for consistency. A Backstage app can also generate and
 publish TechDocs sites if `techdocs.builder` is set to `'local'` in
 `app-config.yaml`. See
@@ -114,17 +119,19 @@ Generate TechDocs documentation site using MkDocs.
 Options:
   --source-dir <PATH>             Source directory containing mkdocs.yml and docs/ directory. (default: ".")
   --output-dir <PATH>             Output directory containing generated TechDocs site. (default: "./site/")
-  --docker-image <DOCKER_IMAGE>   The mkdocs docker container to use (default: "spotify/techdocs:v0.3.4")
+  --docker-image <DOCKER_IMAGE>   The mkdocs docker container to use (default: "spotify/techdocs:v0.3.6")
   --no-pull                       Do not pull the latest docker image
   --no-docker                     Do not use Docker, use MkDocs executable and plugins in current user environment.
   --techdocs-ref <HOST_TYPE:URL>  The repository hosting documentation source files e.g.
-                                  github:https://ghe.mycompany.net.com/org/repo.
+                                  url:https://ghe.mycompany.net.com/org/repo.
                                   This value is same as the backstage.io/techdocs-ref annotation of the corresponding
                                   Backstage entity.
                                   It is completely fine to skip this as it is only being used to set repo_url in mkdocs.yml
                                   if not found.
   --etag <ETAG>                   A unique identifier for the prepared tree e.g. commit SHA. If provided it will be stored
                                   in techdocs_metadata.json.
+  --omitTechdocsCoreMkdocsPlugin  An option to disable automatic addition of techdocs-core plugin to the mkdocs.yaml files.
+                                  Defaults to false, which means that the techdocs-core plugin is always added to the mkdocs file.
   -v --verbose                    Enable verbose output. (default: false)
   -h, --help                      display help for command
 ```

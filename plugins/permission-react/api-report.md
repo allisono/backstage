@@ -4,14 +4,15 @@
 
 ```ts
 import { ApiRef } from '@backstage/core-plugin-api';
-import { AuthorizeRequest } from '@backstage/plugin-permission-common';
-import { AuthorizeResponse } from '@backstage/plugin-permission-common';
+import { AuthorizeDecision } from '@backstage/plugin-permission-common';
+import { AuthorizeQuery } from '@backstage/plugin-permission-common';
+import { ComponentProps } from 'react';
 import { Config } from '@backstage/config';
 import { DiscoveryApi } from '@backstage/core-plugin-api';
 import { IdentityApi } from '@backstage/core-plugin-api';
 import { Permission } from '@backstage/plugin-permission-common';
-import { default as React_2 } from 'react';
-import { RouteProps } from 'react-router';
+import { ReactElement } from 'react';
+import { Route } from 'react-router';
 
 // @public (undocumented)
 export type AsyncPermissionResult = {
@@ -23,41 +24,31 @@ export type AsyncPermissionResult = {
 // @public
 export class IdentityPermissionApi implements PermissionApi {
   // (undocumented)
-  authorize(request: AuthorizeRequest): Promise<AuthorizeResponse>;
+  authorize(request: AuthorizeQuery): Promise<AuthorizeDecision>;
   // (undocumented)
-  static create({
-    configApi,
-    discoveryApi,
-    identityApi,
-  }: {
-    configApi: Config;
-    discoveryApi: DiscoveryApi;
-    identityApi: IdentityApi;
+  static create(options: {
+    config: Config;
+    discovery: DiscoveryApi;
+    identity: IdentityApi;
   }): IdentityPermissionApi;
 }
 
 // @public
 export type PermissionApi = {
-  authorize(request: AuthorizeRequest): Promise<AuthorizeResponse>;
+  authorize(request: AuthorizeQuery): Promise<AuthorizeDecision>;
 };
 
 // @public
 export const permissionApiRef: ApiRef<PermissionApi>;
 
 // @public
-export const PermissionedRoute: ({
-  permission,
-  resourceRef,
-  errorComponent,
-  ...props
-}: RouteProps & {
-  permission: Permission;
-  resourceRef?: string | undefined;
-  errorComponent?:
-    | React_2.ReactElement<any, string | React_2.JSXElementConstructor<any>>
-    | null
-    | undefined;
-}) => JSX.Element;
+export const PermissionedRoute: (
+  props: ComponentProps<typeof Route> & {
+    permission: Permission;
+    resourceRef?: string;
+    errorComponent?: ReactElement | null;
+  },
+) => JSX.Element;
 
 // @public
 export const usePermission: (

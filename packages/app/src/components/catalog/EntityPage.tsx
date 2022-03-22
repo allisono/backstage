@@ -15,6 +15,7 @@
  */
 
 import {
+  Entity,
   RELATION_API_CONSUMED_BY,
   RELATION_API_PROVIDED_BY,
   RELATION_CONSUMES_API,
@@ -37,6 +38,7 @@ import {
   EntityAzurePipelinesContent,
   EntityAzurePullRequestsContent,
   isAzureDevOpsAvailable,
+  isAzurePipelinesAvailable,
 } from '@backstage/plugin-azure-devops';
 import { EntityBadgesDialog } from '@backstage/plugin-badges';
 import {
@@ -106,10 +108,7 @@ import { EntityTechdocsContent } from '@backstage/plugin-techdocs';
 import { EntityTodoContent } from '@backstage/plugin-todo';
 import { Button, Grid } from '@material-ui/core';
 import BadgeIcon from '@material-ui/icons/CallToAction';
-import {
-  EntityBuildkiteContent,
-  isBuildkiteAvailable,
-} from '@roadiehq/backstage-plugin-buildkite';
+
 import {
   EntityGithubInsightsContent,
   EntityGithubInsightsLanguagesCard,
@@ -127,7 +126,20 @@ import {
   EntityTravisCIOverviewCard,
   isTravisciAvailable,
 } from '@roadiehq/backstage-plugin-travis-ci';
+import {
+  EntityBuildkiteContent,
+  isBuildkiteAvailable,
+} from '@roadiehq/backstage-plugin-buildkite';
+import {
+  isNewRelicDashboardAvailable,
+  EntityNewRelicDashboardContent,
+  EntityNewRelicDashboardCard,
+} from '@backstage/plugin-newrelic-dashboard';
+import { EntityGoCdContent, isGoCdAvailable } from '@backstage/plugin-gocd';
+
 import React, { ReactNode, useMemo, useState } from 'react';
+
+const customEntityFilterKind = ['Component', 'API', 'System'];
 
 const EntityLayoutWrapper = (props: { children?: ReactNode }) => {
   const [badgesDialogOpen, setBadgesDialogOpen] = useState(false);
@@ -184,11 +196,15 @@ export const cicdContent = (
       <EntityTravisCIContent />
     </EntitySwitch.Case>
 
+    <EntitySwitch.Case if={isGoCdAvailable}>
+      <EntityGoCdContent />
+    </EntitySwitch.Case>
+
     <EntitySwitch.Case if={isGithubActionsAvailable}>
       <EntityGithubActionsContent />
     </EntitySwitch.Case>
 
-    <EntitySwitch.Case if={isAzureDevOpsAvailable}>
+    <EntitySwitch.Case if={isAzurePipelinesAvailable}>
       <EntityAzurePipelinesContent defaultLimit={25} />
     </EntitySwitch.Case>
 
@@ -219,7 +235,7 @@ const cicdCard = (
       </Grid>
     </EntitySwitch.Case>
 
-    <EntitySwitch.Case if={isTravisciAvailable}>
+    <EntitySwitch.Case if={isTravisciAvailable as (e: Entity) => boolean}>
       <Grid item sm={6}>
         <EntityTravisCIOverviewCard />
       </Grid>
@@ -296,6 +312,14 @@ const overviewContent = (
       </EntitySwitch.Case>
     </EntitySwitch>
 
+    <EntitySwitch>
+      <EntitySwitch.Case if={isNewRelicDashboardAvailable}>
+        <Grid item md={6} xs={12}>
+          <EntityNewRelicDashboardCard />
+        </Grid>
+      </EntitySwitch.Case>
+    </EntitySwitch>
+
     <Grid item md={4} xs={12}>
       <EntityLinksCard />
     </Grid>
@@ -303,7 +327,7 @@ const overviewContent = (
     {cicdCard}
 
     <EntitySwitch>
-      <EntitySwitch.Case if={e => Boolean(isGithubInsightsAvailable(e))}>
+      <EntitySwitch.Case if={isGithubInsightsAvailable}>
         <Grid item md={6}>
           <EntityGithubInsightsLanguagesCard />
           <EntityGithubInsightsReleasesCard />
@@ -323,7 +347,7 @@ const overviewContent = (
     </EntitySwitch>
 
     <EntitySwitch>
-      <EntitySwitch.Case if={e => Boolean(isGithubPullRequestsAvailable(e))}>
+      <EntitySwitch.Case if={isGithubPullRequestsAvailable}>
         <Grid item sm={4}>
           <EntityGithubPullRequestsOverviewCard />
         </Grid>
@@ -374,6 +398,14 @@ const serviceEntityPage = (
 
     <EntityLayout.Route path="/docs" title="Docs">
       <EntityTechdocsContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route
+      if={isNewRelicDashboardAvailable}
+      path="/newrelic-dashboard"
+      title="New Relic Dashboard"
+    >
+      <EntityNewRelicDashboardContent />
     </EntityLayout.Route>
 
     <EntityLayout.Route path="/kubernetes" title="Kubernetes">
@@ -433,6 +465,13 @@ const websiteEntityPage = (
 
     <EntityLayout.Route path="/docs" title="Docs">
       <EntityTechdocsContent />
+    </EntityLayout.Route>
+    <EntityLayout.Route
+      if={isNewRelicDashboardAvailable}
+      path="/newrelic-dashboard"
+      title="New Relic Dashboard"
+    >
+      <EntityNewRelicDashboardContent />
     </EntityLayout.Route>
 
     <EntityLayout.Route path="/kubernetes" title="Kubernetes">
@@ -530,7 +569,10 @@ const userPage = (
           <EntityUserProfileCard variant="gridItem" />
         </Grid>
         <Grid item xs={12} md={6}>
-          <EntityOwnershipCard variant="gridItem" />
+          <EntityOwnershipCard
+            variant="gridItem"
+            entityFilterKind={customEntityFilterKind}
+          />
         </Grid>
       </Grid>
     </EntityLayout.Route>
@@ -546,7 +588,10 @@ const groupPage = (
           <EntityGroupProfileCard variant="gridItem" />
         </Grid>
         <Grid item xs={12} md={6}>
-          <EntityOwnershipCard variant="gridItem" />
+          <EntityOwnershipCard
+            variant="gridItem"
+            entityFilterKind={customEntityFilterKind}
+          />
         </Grid>
         <Grid item xs={12}>
           <EntityMembersListCard />

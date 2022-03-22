@@ -18,11 +18,13 @@ import { Config } from '@backstage/config';
 import { JsonValue } from '@backstage/types';
 import { SearchOptions } from 'ldapjs';
 import mergeWith from 'lodash/mergeWith';
-import { RecursivePartial } from '@backstage/plugin-catalog-backend';
 import { trimEnd } from 'lodash';
+import { RecursivePartial } from './util';
 
 /**
  * The configuration parameters for a single LDAP provider.
+ *
+ * @public
  */
 export type LdapProviderConfig = {
   // The prefix of the target that this matches on, e.g.
@@ -39,6 +41,8 @@ export type LdapProviderConfig = {
 
 /**
  * The settings to use for the a command.
+ *
+ * @public
  */
 export type BindConfig = {
   // The DN of the user to auth as, e.g.
@@ -50,6 +54,8 @@ export type BindConfig = {
 
 /**
  * The settings that govern the reading and interpretation of users.
+ *
+ * @public
  */
 export type UserConfig = {
   // The DN under which users are stored.
@@ -88,6 +94,8 @@ export type UserConfig = {
 
 /**
  * The settings that govern the reading and interpretation of groups.
+ *
+ * @public
  */
 export type GroupConfig = {
   // The DN under which groups are stored.
@@ -163,9 +171,20 @@ const defaultConfig = {
 /**
  * Parses configuration.
  *
- * @param config The root of the LDAP config hierarchy
+ * @param config - The root of the LDAP config hierarchy
+ *
+ * @public
  */
 export function readLdapConfig(config: Config): LdapProviderConfig[] {
+  function freeze<T>(data: T): T {
+    return JSON.parse(JSON.stringify(data), (_key, value) => {
+      if (typeof value === 'object' && value !== null) {
+        Object.freeze(value);
+      }
+      return value;
+    });
+  }
+
   function readBindConfig(
     c: Config | undefined,
   ): LdapProviderConfig['bind'] | undefined {
@@ -189,6 +208,10 @@ export function readLdapConfig(config: Config): LdapProviderConfig[] {
       scope: c.getOptionalString('scope') as SearchOptions['scope'],
       filter: formatFilter(c.getOptionalString('filter')),
       attributes: c.getOptionalStringArray('attributes'),
+      sizeLimit: c.getOptionalNumber('sizeLimit'),
+      timeLimit: c.getOptionalNumber('timeLimit'),
+      derefAliases: c.getOptionalNumber('derefAliases'),
+      typesOnly: c.getOptionalBoolean('typesOnly'),
       ...(paged !== undefined ? { paged } : undefined),
     };
   }
@@ -217,7 +240,7 @@ export function readLdapConfig(config: Config): LdapProviderConfig[] {
     if (!c) {
       return undefined;
     }
-    return Object.fromEntries(c.keys().map(path => [path, c.get(path)]));
+    return c.get();
   }
 
   function readUserMapConfig(
@@ -297,6 +320,6 @@ export function readLdapConfig(config: Config): LdapProviderConfig[] {
       // Replace arrays instead of merging, otherwise default behavior
       return Array.isArray(from) ? from : undefined;
     });
-    return merged as LdapProviderConfig;
+    return freeze(merged) as LdapProviderConfig;
   });
 }

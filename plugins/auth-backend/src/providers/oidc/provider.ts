@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+import {
+  DEFAULT_NAMESPACE,
+  stringifyEntityRef,
+} from '@backstage/catalog-model';
 import express from 'express';
 import {
   Client,
@@ -56,7 +60,11 @@ type OidcImpl = {
   client: Client;
 };
 
-type AuthResult = {
+/**
+ * authentication result for the OIDC which includes the token set and user information (a profile response sent by OIDC server)
+ * @public
+ */
+export type OidcAuthResult = {
   tokenset: TokenSet;
   userinfo: UserinfoResponse;
 };
@@ -66,8 +74,8 @@ export type Options = OAuthProviderOptions & {
   scope?: string;
   prompt?: string;
   tokenSignedResponseAlg?: string;
-  signInResolver?: SignInResolver<AuthResult>;
-  authHandler: AuthHandler<AuthResult>;
+  signInResolver?: SignInResolver<OidcAuthResult>;
+  authHandler: AuthHandler<OidcAuthResult>;
   tokenIssuer: TokenIssuer;
   catalogIdentityClient: CatalogIdentityClient;
   logger: Logger;
@@ -78,8 +86,8 @@ export class OidcAuthProvider implements OAuthHandlers {
   private readonly scope?: string;
   private readonly prompt?: string;
 
-  private readonly signInResolver?: SignInResolver<AuthResult>;
-  private readonly authHandler: AuthHandler<AuthResult>;
+  private readonly signInResolver?: SignInResolver<OidcAuthResult>;
+  private readonly authHandler: AuthHandler<OidcAuthResult>;
   private readonly tokenIssuer: TokenIssuer;
   private readonly catalogIdentityClient: CatalogIdentityClient;
   private readonly logger: Logger;
@@ -108,34 +116,31 @@ export class OidcAuthProvider implements OAuthHandlers {
     return await executeRedirectStrategy(req, strategy, options);
   }
 
-  async handler(
-    req: express.Request,
-  ): Promise<{ response: OAuthResponse; refreshToken?: string }> {
+  async handler(req: express.Request) {
     const { strategy } = await this.implementation;
-    const strategyResponse = await executeFrameHandlerStrategy<
-      AuthResult,
+    const { result, privateInfo } = await executeFrameHandlerStrategy<
+      OidcAuthResult,
       PrivateInfo
     >(req, strategy);
-    const {
-      result: { userinfo, tokenset },
-      privateInfo,
-    } = strategyResponse;
 
-    const identityResponse = await this.handleResult({ tokenset, userinfo });
     return {
-      response: identityResponse,
+      response: await this.handleResult(result),
       refreshToken: privateInfo.refreshToken,
     };
   }
 
-  async refresh(req: OAuthRefreshRequest): Promise<OAuthResponse> {
+  async refresh(req: OAuthRefreshRequest) {
     const { client } = await this.implementation;
     const tokenset = await client.refresh(req.refreshToken);
     if (!tokenset.access_token) {
       throw new Error('Refresh failed');
     }
-    const profile = await client.userinfo(tokenset.access_token);
-    return this.handleResult({ tokenset, userinfo: profile });
+    const userinfo = await client.userinfo(tokenset.access_token);
+
+    return {
+      response: await this.handleResult({ tokenset, userinfo }),
+      refreshToken: tokenset.refresh_token,
+    };
   }
 
   private async setupStrategy(options: Options): Promise<OidcImpl> {
@@ -158,7 +163,7 @@ export class OidcAuthProvider implements OAuthHandlers {
       (
         tokenset: TokenSet,
         userinfo: UserinfoResponse,
-        done: PassportDoneCallback<AuthResult, PrivateInfo>,
+        done: PassportDoneCallback<OidcAuthResult, PrivateInfo>,
       ) => {
         if (typeof done !== 'function') {
           throw new Error(
@@ -180,13 +185,17 @@ export class OidcAuthProvider implements OAuthHandlers {
 
   // Use this function to grab the user profile info from the token
   // Then populate the profile with it
-  private async handleResult(result: AuthResult): Promise<OAuthResponse> {
-    const { profile } = await this.authHandler(result);
+  private async handleResult(result: OidcAuthResult): Promise<OAuthResponse> {
+    const context = {
+      logger: this.logger,
+      catalogIdentityClient: this.catalogIdentityClient,
+      tokenIssuer: this.tokenIssuer,
+    };
+    const { profile } = await this.authHandler(result, context);
     const response: OAuthResponse = {
       providerInfo: {
         idToken: result.tokenset.id_token,
         accessToken: result.tokenset.access_token!,
-        refreshToken: result.tokenset.refresh_token,
         scope: result.tokenset.scope!,
         expiresInSeconds: result.tokenset.expires_in,
       },
@@ -198,18 +207,15 @@ export class OidcAuthProvider implements OAuthHandlers {
           result,
           profile,
         },
-        {
-          tokenIssuer: this.tokenIssuer,
-          catalogIdentityClient: this.catalogIdentityClient,
-          logger: this.logger,
-        },
+        context,
       );
     }
+
     return response;
   }
 }
 
-export const oAuth2DefaultSignInResolver: SignInResolver<AuthResult> = async (
+export const oidcDefaultSignInResolver: SignInResolver<OidcAuthResult> = async (
   info,
   ctx,
 ) => {
@@ -218,18 +224,42 @@ export const oAuth2DefaultSignInResolver: SignInResolver<AuthResult> = async (
   if (!profile.email) {
     throw new Error('Profile contained no email');
   }
+
   const userId = profile.email.split('@')[0];
-  const token = await ctx.tokenIssuer.issueToken({
-    claims: { sub: userId, ent: [`user:default/${userId}`] },
+
+  const entityRef = stringifyEntityRef({
+    kind: 'User',
+    namespace: DEFAULT_NAMESPACE,
+    name: userId,
   });
+
+  const token = await ctx.tokenIssuer.issueToken({
+    claims: {
+      sub: entityRef,
+      ent: [entityRef],
+    },
+  });
+
   return { id: userId, token };
 };
 
+/**
+ * OIDC provider callback options. An auth handler and a sign in resolver
+ * can be passed while creating a OIDC provider.
+ *
+ * authHandler : called after sign in was successful, a new object must be returned which includes a profile
+ * signInResolver: called after sign in was successful, expects to return a new {@link @backstage/plugin-auth-node#BackstageSignInResult}
+ *
+ * Both options are optional. There is fallback for authHandler where the default handler expect an e-mail explicitly
+ * otherwise it throws an error
+ *
+ * @public
+ */
 export type OidcProviderOptions = {
-  authHandler?: AuthHandler<AuthResult>;
+  authHandler?: AuthHandler<OidcAuthResult>;
 
   signIn?: {
-    resolver?: SignInResolver<AuthResult>;
+    resolver?: SignInResolver<OidcAuthResult>;
   };
 };
 
@@ -241,13 +271,17 @@ export const createOidcProvider = (
     globalConfig,
     config,
     tokenIssuer,
+    tokenManager,
     catalogApi,
     logger,
   }) =>
     OAuthEnvironmentHandler.mapConfig(config, envConfig => {
       const clientId = envConfig.getString('clientId');
       const clientSecret = envConfig.getString('clientSecret');
-      const callbackUrl = `${globalConfig.baseUrl}/${providerId}/handler/frame`;
+      const customCallbackUrl = envConfig.getOptionalString('callbackUrl');
+      const callbackUrl =
+        customCallbackUrl ||
+        `${globalConfig.baseUrl}/${providerId}/handler/frame`;
       const metadataUrl = envConfig.getString('metadataUrl');
       const tokenSignedResponseAlg = envConfig.getOptionalString(
         'tokenSignedResponseAlg',
@@ -256,10 +290,10 @@ export const createOidcProvider = (
       const prompt = envConfig.getOptionalString('prompt');
       const catalogIdentityClient = new CatalogIdentityClient({
         catalogApi,
-        tokenIssuer,
+        tokenManager,
       });
 
-      const authHandler: AuthHandler<AuthResult> = options?.authHandler
+      const authHandler: AuthHandler<OidcAuthResult> = options?.authHandler
         ? options.authHandler
         : async ({ userinfo }) => ({
             profile: {
@@ -269,8 +303,8 @@ export const createOidcProvider = (
             },
           });
       const signInResolverFn =
-        options?.signIn?.resolver ?? oAuth2DefaultSignInResolver;
-      const signInResolver: SignInResolver<AuthResult> = info =>
+        options?.signIn?.resolver ?? oidcDefaultSignInResolver;
+      const signInResolver: SignInResolver<OidcAuthResult> = info =>
         signInResolverFn(info, {
           catalogIdentityClient,
           tokenIssuer,
@@ -296,6 +330,7 @@ export const createOidcProvider = (
         disableRefresh: false,
         providerId,
         tokenIssuer,
+        callbackUrl,
       });
     });
 };

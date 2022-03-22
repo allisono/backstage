@@ -96,20 +96,23 @@ async function getProjectConfig(targetPath, displayName) {
     rootDir: path.resolve(targetPath, 'src'),
     coverageDirectory: path.resolve(targetPath, 'coverage'),
     coverageProvider: 'v8',
-    collectCoverageFrom: ['**/*.{js,jsx,ts,tsx}', '!**/*.d.ts'],
+    collectCoverageFrom: ['**/*.{js,jsx,ts,tsx,mjs,cjs}', '!**/*.d.ts'],
     moduleNameMapper: {
       '\\.(css|less|scss|sss|styl)$': require.resolve('jest-css-modules'),
     },
 
     transform: {
-      '\\.(js|jsx|ts|tsx)$': require.resolve('./jestSucraseTransform.js'),
+      '\\.(js|jsx|ts|tsx|mjs|cjs)$': [
+        require.resolve('./jestSucraseTransform.js'),
+        { enableSourceMaps: Boolean(process.env.ENABLE_SOURCE_MAPS) },
+      ],
       '\\.(bmp|gif|jpg|jpeg|png|frag|xml|svg|eot|woff|woff2|ttf)$':
         require.resolve('./jestFileTransform.js'),
       '\\.(yaml)$': require.resolve('jest-transform-yaml'),
     },
 
     // A bit more opinionated
-    testMatch: ['**/?(*.)test.{js,jsx,mjs,ts,tsx}'],
+    testMatch: ['**/*.test.{js,jsx,ts,tsx,mjs,cjs}'],
 
     transformIgnorePatterns: [`/node_modules/(?:${transformIgnorePattern})/`],
   };
@@ -172,7 +175,10 @@ async function getRootConfig() {
       // script to determine whether a given package should be tested
       const packageData = await fs.readJson(packagePath);
       const testScript = packageData.scripts && packageData.scripts.test;
-      if (testScript && testScript.includes('backstage-cli test')) {
+      const isSupportedTestScript =
+        testScript?.includes('backstage-cli test') ||
+        testScript?.includes('backstage-cli package test');
+      if (testScript && isSupportedTestScript) {
         return await getProjectConfig(projectPath, packageData.name);
       }
 

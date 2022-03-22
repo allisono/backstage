@@ -15,7 +15,12 @@
  */
 
 import {
+  Build,
+  BuildDefinitionReference,
+} from 'azure-devops-node-api/interfaces/BuildInterfaces';
+import {
   BuildResult,
+  BuildRun,
   BuildStatus,
   DashboardPullRequest,
   Policy,
@@ -23,6 +28,7 @@ import {
   PullRequestOptions,
   RepoBuild,
   Team,
+  TeamMember,
 } from '@backstage/plugin-azure-devops-common';
 import {
   GitPullRequest,
@@ -35,10 +41,9 @@ import {
   getArtifactId,
 } from '../utils';
 
-import { Build } from 'azure-devops-node-api/interfaces/BuildInterfaces';
+import { TeamMember as AdoTeamMember } from 'azure-devops-node-api/interfaces/common/VSSInterfaces';
 import { Logger } from 'winston';
 import { PolicyEvaluationRecord } from 'azure-devops-node-api/interfaces/PolicyInterfaces';
-import { TeamMember } from 'azure-devops-node-api/interfaces/common/VSSInterfaces';
 import { WebApi } from 'azure-devops-node-api';
 import { WebApiTeam } from 'azure-devops-node-api/interfaces/CoreInterfaces';
 
@@ -224,39 +229,116 @@ export class AzureDevOpsApi {
     const client = await this.webApi.getCoreApi();
     const webApiTeams: WebApiTeam[] = await client.getAllTeams();
 
-    const teams: Team[] = await Promise.all(
-      webApiTeams.map(async team => ({
-        id: team.id,
-        name: team.name,
-        memberIds: await this.getTeamMemberIds(team),
-      })),
-    );
+    const teams: Team[] = webApiTeams.map(team => ({
+      id: team.id,
+      name: team.name,
+      projectId: team.projectId,
+      projectName: team.projectName,
+    }));
 
     return teams.sort((a, b) =>
       a.name && b.name ? a.name.localeCompare(b.name) : 0,
     );
   }
 
-  private async getTeamMemberIds(
-    team: WebApiTeam,
-  ): Promise<string[] | undefined> {
-    this.logger?.debug(`Getting team member ids for team '${team.name}'.`);
-
-    if (!team.projectId || !team.id) {
-      return undefined;
-    }
+  public async getTeamMembers({
+    projectId,
+    teamId,
+  }: {
+    projectId: string;
+    teamId: string;
+  }): Promise<TeamMember[] | undefined> {
+    this.logger?.debug(`Getting team member ids for team '${teamId}'.`);
 
     const client = await this.webApi.getCoreApi();
 
-    const teamMembers: TeamMember[] =
-      await client.getTeamMembersWithExtendedProperties(
-        team.projectId,
-        team.id,
-      );
+    const teamMembers: AdoTeamMember[] =
+      await client.getTeamMembersWithExtendedProperties(projectId, teamId);
 
-    return teamMembers
-      .map(teamMember => teamMember.identity?.id)
-      .filter((id): id is string => Boolean(id));
+    return teamMembers.map(teamMember => ({
+      id: teamMember.identity?.id,
+      displayName: teamMember.identity?.displayName,
+      uniqueName: teamMember.identity?.uniqueName,
+    }));
+  }
+
+  public async getBuildDefinitions(
+    projectName: string,
+    definitionName: string,
+  ): Promise<BuildDefinitionReference[]> {
+    this.logger?.debug(
+      `Calling Azure DevOps REST API, getting Build Definitions for ${definitionName} in Project ${projectName}`,
+    );
+
+    const client = await this.webApi.getBuildApi();
+    return client.getDefinitions(projectName, definitionName);
+  }
+
+  public async getBuilds(
+    projectName: string,
+    top: number,
+    repoId?: string,
+    definitions?: number[],
+  ): Promise<Build[]> {
+    this.logger?.debug(
+      `Calling Azure DevOps REST API, getting up to ${top} Builds for Repository Id ${repoId} for Project ${projectName}`,
+    );
+
+    const client = await this.webApi.getBuildApi();
+    return client.getBuilds(
+      projectName,
+      definitions,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      top,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      repoId,
+      repoId ? 'TfsGit' : undefined,
+    );
+  }
+
+  public async getBuildRuns(
+    projectName: string,
+    top: number,
+    repoName?: string,
+    definitionName?: string,
+  ) {
+    let repoId: string | undefined;
+    let definitions: number[] | undefined;
+
+    if (repoName) {
+      const gitRepository = await this.getGitRepository(projectName, repoName);
+      repoId = gitRepository.id;
+    }
+
+    if (definitionName) {
+      const buildDefinitions = await this.getBuildDefinitions(
+        projectName,
+        definitionName,
+      );
+      definitions = buildDefinitions
+        .map(bd => bd.id)
+        .filter((bd): bd is number => Boolean(bd));
+    }
+
+    const builds = await this.getBuilds(projectName, top, repoId, definitions);
+
+    const buildRuns: BuildRun[] = builds.map(mappedBuildRun);
+
+    return buildRuns;
   }
 }
 
@@ -293,5 +375,22 @@ export function mappedPullRequest(
     status: pullRequest.status,
     isDraft: pullRequest.isDraft,
     link: `${linkBaseUrl}/${pullRequest.pullRequestId}`,
+  };
+}
+
+export function mappedBuildRun(build: Build): BuildRun {
+  return {
+    id: build.id,
+    title: [build.definition?.name, build.buildNumber]
+      .filter(Boolean)
+      .join(' - '),
+    link: build._links?.web.href ?? '',
+    status: build.status ?? BuildStatus.None,
+    result: build.result ?? BuildResult.None,
+    queueTime: build.queueTime?.toISOString(),
+    startTime: build.startTime?.toISOString(),
+    finishTime: build.finishTime?.toISOString(),
+    source: `${build.sourceBranch} (${build.sourceVersion?.substr(0, 8)})`,
+    uniqueName: build.requestedFor?.uniqueName ?? 'N/A',
   };
 }

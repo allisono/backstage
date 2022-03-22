@@ -8,7 +8,7 @@ See [techdocs-cli usage docs](https://backstage.io/docs/features/techdocs/cli).
 
 ## Development
 
-NOTE: When we build `techdocs-cli` it copies the output `embedded-techdocs-app`
+NOTE: When we build `techdocs-cli` it copies the output `techdocs-cli-embedded-app`
 bundle into the `packages/techdocs-cli/dist` which is then published with the
 `@techdocs/cli` npm package.
 
@@ -16,8 +16,8 @@ bundle into the `packages/techdocs-cli/dist` which is then published with the
 
 ```sh
 # From the root of this repository run
-# NOTE: This will build the embedded-techdocs-app and copy the output into the cli dist directory
-yarn build --scope @techdocs/cli
+# NOTE: This will build the techdocs-cli-embedded-app and copy the output into the cli dist directory
+yarn workspace @techdocs/cli build
 
 # Now execute the binary
 packages/techdocs-cli/bin/techdocs-cli
@@ -26,21 +26,38 @@ packages/techdocs-cli/bin/techdocs-cli
 export PATH=/path/to/backstage/packages/techdocs-cli/bin:$PATH
 ```
 
-If you want to test live test changes to the `packages/embedded-techdocs-app`
+If you want to test live test changes to the `packages/techdocs-cli-embedded-app`
 you can serve the app and run the CLI using the following commands:
 
 ```sh
-# Open a shell to the embedded-techdocs-app directory
-cd packages/embedded-techdocs-app
+# Open a shell to the techdocs-cli-embedded-app directory
+cd packages/techdocs-cli-embedded-app
 
-# Run the embedded-techdocs-app using dev mode
+# Run the techdocs-cli-embedded-app using dev mode
 yarn start
 
 # In another shell use the techdocs-cli from the root of this repo
 yarn techdocs-cli:dev [...options]
 ```
 
+### Using an example docs project
+
+For the purpose of local development, we have created an example documentation project. You are of course also free to create your own local test site - all it takes is a `docs/index.md` and an `mkdocs.yml` in a directory.
+
+```sh
+
+cd packages/techdocs-cli/src/example-docs
+
+# To get a view of your docs in Backstage, use:
+techdocs-cli serve
+
+# To view the raw mkdocs site (without Backstage), use:
+techdocs-cli serve:mkdocs
+```
+
 ### Testing
+
+#### E2E tests
 
 Running unit tests requires mkdocs to be installed locally:
 
@@ -51,18 +68,37 @@ pip install mkdocs-techdocs-core
 
 Then run `yarn test`.
 
-### Use an example docs project
+#### Cypress (Integration and Visual regression) tests
 
-We have created an [example documentation project](https://github.com/backstage/techdocs-container/tree/main/mock-docs) and it's shipped with [techdocs-container](https://github.com/backstage/techdocs-container) repository, for the purpose of local development. But you are free to create your own local test site. All it takes is a `docs/index.md` and `mkdocs.yml` in a directory.
+Running cypress tests requires you to run the CLI locally against our example docs.
+
+Run the local version of techdocs-cli against the example docs:
 
 ```sh
-git clone https://github.com/backstage/techdocs-container.git
+# From the root of this repository run
+# NOTE: This will build the techdocs-cli-embedded-app and copy the output into the cli dist directory
+yarn build --scope @techdocs/cli
 
-cd techdocs-container/mock-docs
+# Navigate to the example project
+cd packages/techdocs-cli/src/example-docs
 
-# To get a view of your docs in Backstage, use:
-techdocs-cli serve
-
-# To view the raw mkdocs site (without Backstage), use:
-techdocs-cli serve:mkdocs
+# Now execute the techdocs-cli serve command
+../../bin/techdocs-cli serve
 ```
+
+In another shell, run the cypress tests:
+
+```sh
+# From the root of the project, navigate to the techdocs-cli package
+cd packages/techdocs-cli
+
+# Run tests
+yarn test:cypress
+```
+
+This will launch a cypress app where you can run the two different tests:
+
+- `backstage_serve` - will run against the backstage server
+- `mkdocs_serve` - will run test against the mkdocs server
+
+> If its the first time you run Cypress, it will run a "Verifying Cypress can run" step. This step can result in a "Cypress verification timed out" error. If that is the case, let the verification step run and then run the command again and it should succeed.

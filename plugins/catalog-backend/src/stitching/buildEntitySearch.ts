@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  Entity,
-  ENTITY_DEFAULT_NAMESPACE,
-  stringifyEntityRef,
-} from '@backstage/catalog-model';
+import { Entity, DEFAULT_NAMESPACE } from '@backstage/catalog-model';
 import { InputError } from '@backstage/errors';
 import { DbSearchRow } from '../database/tables';
 
@@ -33,7 +29,6 @@ const SPECIAL_KEYS = [
   'metadata.namespace',
   'metadata.uid',
   'metadata.etag',
-  'metadata.generation',
 ];
 
 // The maximum length allowed for search values. These columns are indexed, and
@@ -154,8 +149,8 @@ export function mapToRows(input: Kv[], entityId: string): DbSearchRow[] {
 /**
  * Generates all of the search rows that are relevant for this entity.
  *
- * @param entityId The uid of the entity
- * @param entity The entity
+ * @param entityId - The uid of the entity
+ * @param entity - The entity
  * @returns A list of entity search rows
  */
 export function buildEntitySearch(
@@ -174,14 +169,14 @@ export function buildEntitySearch(
   // Namespace not specified has the default value "default", so we want to
   // match on that as well
   if (!entity.metadata.namespace) {
-    raw.push({ key: 'metadata.namespace', value: ENTITY_DEFAULT_NAMESPACE });
+    raw.push({ key: 'metadata.namespace', value: DEFAULT_NAMESPACE });
   }
 
   // Visit relations
   for (const relation of entity.relations ?? []) {
     raw.push({
       key: `relations.${relation.type}`,
-      value: stringifyEntityRef(relation.target),
+      value: relation.targetRef,
     });
   }
 

@@ -16,7 +16,7 @@
 
 import React, { ReactNode, useState, useEffect } from 'react';
 import { useApi, storageApiRef } from '@backstage/core-plugin-api';
-import { useObservable } from 'react-use';
+import useObservable from 'react-use/lib/useObservable';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import { BackstageTheme } from '@backstage/theme';
@@ -101,7 +101,7 @@ export const DismissableBanner = (props: Props) => {
   const storageApi = useApi(storageApiRef);
   const notificationsStore = storageApi.forBucket('notifications');
   const rawDismissedBanners =
-    notificationsStore.get<string[]>('dismissedBanners') ?? [];
+    notificationsStore.snapshot<string[]>('dismissedBanners').value ?? [];
 
   const [dismissedBanners, setDismissedBanners] = useState(
     new Set(rawDismissedBanners),
@@ -112,11 +112,11 @@ export const DismissableBanner = (props: Props) => {
   );
 
   useEffect(() => {
-    if (observedItems?.newValue) {
-      const currentValue = observedItems?.newValue ?? [];
+    if (observedItems?.value) {
+      const currentValue = observedItems?.value ?? [];
       setDismissedBanners(new Set(currentValue));
     }
-  }, [observedItems?.newValue]);
+  }, [observedItems?.value]);
 
   const handleClick = () => {
     notificationsStore.set('dismissedBanners', [...dismissedBanners, id]);

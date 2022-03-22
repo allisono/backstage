@@ -1,5 +1,145 @@
 # @backstage/test-utils
 
+## 1.0.1-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-app-api@1.0.1-next.0
+
+## 1.0.0
+
+### Major Changes
+
+- b58c70c223: This package has been promoted to v1.0! To understand how this change affects the package, please check out our [versioning policy](https://backstage.io/docs/overview/versioning-policy).
+
+### Patch Changes
+
+- a422d7ce5e: chore(deps): bump `@testing-library/react` from 11.2.6 to 12.1.3
+- f24ef7864e: Minor typo fixes
+- Updated dependencies
+  - @backstage/core-app-api@1.0.0
+  - @backstage/core-plugin-api@1.0.0
+  - @backstage/plugin-permission-react@0.3.4
+  - @backstage/config@1.0.0
+  - @backstage/types@1.0.0
+  - @backstage/plugin-permission-common@0.5.3
+
+## 0.3.0
+
+### Minor Changes
+
+- bb2bb36651: **BREAKING**: Removed the deprecated `get` method from `StorageAPI` and its implementations, this method has been replaced by the `snapshot` method. The return value from snapshot no longer includes `newValue` which has been replaced by `value`. For getting notified when a value changes, use `observe# @backstage/test-utils.
+- af5eaa87f4: **BREAKING**: Removed deprecated `auth0AuthApiRef`, `oauth2ApiRef`, `samlAuthApiRef` and `oidcAuthApiRef` as these APIs are too generic to be useful. Instructions for how to migrate can be found at [https://backstage.io/docs/api/deprecations#generic-auth-api-refs](https://backstage.io/docs/api/deprecations#generic-auth-api-refs).
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-app-api@0.6.0
+  - @backstage/core-plugin-api@0.8.0
+  - @backstage/plugin-permission-common@0.5.2
+  - @backstage/plugin-permission-react@0.3.3
+
+## 0.2.6
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-plugin-api@0.7.0
+  - @backstage/core-app-api@0.5.4
+  - @backstage/plugin-permission-react@0.3.2
+
+## 0.2.5
+
+### Patch Changes
+
+- 1ed305728b: Bump `node-fetch` to version 2.6.7 and `cross-fetch` to version 3.1.5
+- c77c5c7eb6: Added `backstage.role` to `package.json`
+- Updated dependencies
+  - @backstage/core-app-api@0.5.3
+  - @backstage/core-plugin-api@0.6.1
+  - @backstage/plugin-permission-common@0.5.0
+  - @backstage/plugin-permission-react@0.3.1
+  - @backstage/config@0.1.14
+  - @backstage/theme@0.2.15
+  - @backstage/types@0.1.2
+
+## 0.2.4
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-app-api@0.5.2
+
+## 0.2.4-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-app-api@0.5.2-next.0
+
+## 0.2.3
+
+### Patch Changes
+
+- c54c0d9d10: Add MockPermissionApi
+- 6bf7826258: Added a `MockFetchApi`
+- Updated dependencies
+  - @backstage/plugin-permission-react@0.3.0
+  - @backstage/plugin-permission-common@0.4.0
+  - @backstage/core-plugin-api@0.6.0
+  - @backstage/core-app-api@0.5.0
+  - @backstage/config@0.1.13
+
+## 0.2.3-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-plugin-api@0.6.0-next.0
+  - @backstage/config@0.1.13-next.0
+  - @backstage/core-app-api@0.5.0-next.0
+
+## 0.2.2
+
+### Patch Changes
+
+- 2d3fd91e33: Add new `MockConfigApi` as a more discoverable and leaner method for mocking configuration.
+- Updated dependencies
+  - @backstage/config@0.1.12
+  - @backstage/core-plugin-api@0.5.0
+  - @backstage/core-app-api@0.4.0
+
+## 0.2.1
+
+### Patch Changes
+
+- c36b7794f7: JSON serialize and freeze values stored by the `MockStorageApi`.
+
+## 0.2.0
+
+### Minor Changes
+
+- a195284c7b: Updated `MockStorageApi` to reflect the `StorageApi` changes in `@backstage/core-plugin-api`.
+- 771b9c07fe: Removed deprecated `Keyboard` class which has been superseded by `@testing-library/user-event#userEvent`
+- f6722d2458: Removed deprecated `msw` definition which was replaced by calling `setupRequestMockHandlers` directly
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-app-api@0.3.0
+  - @backstage/core-plugin-api@0.4.0
+
+## 0.1.24
+
+### Patch Changes
+
+- cd450844f6: Moved React dependencies to `peerDependencies` and allow both React v16 and v17 to be used.
+- dcd1a0c3f4: Minor improvement to the API reports, by not unpacking arguments directly
+- Updated dependencies
+  - @backstage/core-plugin-api@0.3.0
+  - @backstage/core-app-api@0.2.0
+
 ## 0.1.23
 
 ### Patch Changes

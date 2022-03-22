@@ -15,10 +15,9 @@
  */
 
 import React from 'react';
-import { render, waitForElement } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import { ThemeProvider } from '@material-ui/core';
 import { lightTheme } from '@backstage/theme';
-import { act } from 'react-dom/test-utils';
 import { TestApiProvider, withLogCollector } from '@backstage/test-utils';
 
 import GetBBoxPolyfill from '../utils/polyfills/getBBox';
@@ -74,7 +73,7 @@ describe('RadarComponent', () => {
     });
     expect(getByTestId('progress')).toBeInTheDocument();
 
-    await waitForElement(() => queryByTestId('tech-radar-svg'));
+    await waitFor(() => queryByTestId('tech-radar-svg'));
     jest.useRealTimers();
   });
 
@@ -101,7 +100,7 @@ describe('RadarComponent', () => {
       </ThemeProvider>,
     );
 
-    await waitForElement(() => !queryByTestId('progress'));
+    await waitFor(() => !queryByTestId('progress'));
 
     expect(errorApi.post).toHaveBeenCalledTimes(1);
     expect(errorApi.post).toHaveBeenCalledWith(new Error('404 Page Not Found'));

@@ -1,5 +1,172 @@
 # @techdocs/cli
 
+## 1.0.1-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/catalog-model@1.0.1-next.0
+  - @backstage/backend-common@0.13.2-next.0
+  - @backstage/plugin-techdocs-node@1.0.1-next.0
+
+## 1.0.0
+
+### Major Changes
+
+- b58c70c223: This package has been promoted to v1.0! To understand how this change affects the package, please check out our [versioning policy](https://backstage.io/docs/overview/versioning-policy).
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.13.1
+  - @backstage/catalog-model@1.0.0
+  - @backstage/config@1.0.0
+  - @backstage/plugin-techdocs-node@1.0.0
+
+## 0.8.17
+
+### Patch Changes
+
+- e0a69ba49f: build(deps): bump `fs-extra` from 9.1.0 to 10.0.1
+- 91bf1e6c1a: Use `@backstage/plugin-techdocs-node` package instead of `@backstage/techdocs-common`.
+- Updated dependencies
+  - @backstage/backend-common@0.13.0
+  - @backstage/plugin-techdocs-node@0.11.12
+  - @backstage/catalog-model@0.13.0
+
+## 0.8.17-next.0
+
+### Patch Changes
+
+- e0a69ba49f: build(deps): bump `fs-extra` from 9.1.0 to 10.0.1
+- 91bf1e6c1a: Use `@backstage/plugin-techdocs-node` package instead of `@backstage/techdocs-common`.
+- Updated dependencies
+  - @backstage/backend-common@0.13.0-next.0
+  - @backstage/plugin-techdocs-node@0.11.12-next.0
+  - @backstage/catalog-model@0.13.0-next.0
+
+## 0.8.16
+
+### Patch Changes
+
+- 853efd42bd: Bump `@backstage/techdocs-common` to `0.11.10` to use `spotify/techdocs:v0.3.7` which upgrades `mkdocs-theme` as a dependency of `mkdocs-techdocs-core`.
+- Updated dependencies
+  - @backstage/catalog-model@0.12.0
+  - @backstage/backend-common@0.12.0
+  - @backstage/techdocs-common@0.11.11
+
+## 0.8.15
+
+### Patch Changes
+
+- ed78516480: chore(deps-dev): bump `cypress` from 7.3.0 to 9.5.0
+- 209fd128e6: Updated usage of `github:` location types in docs to use `url:` instead.
+- 61ff215e08: - Adds `cypress` and `cypress-plugin-snapshots` as dependencies for integration and visual regression tests.
+  - Updates README documentation with instructions for how to run tests.
+  - Clarifies output text for prepack script.
+- Updated dependencies
+  - @backstage/backend-common@0.11.0
+  - @backstage/catalog-model@0.11.0
+  - @backstage/techdocs-common@0.11.10
+
+## 0.8.14
+
+### Patch Changes
+
+- c77c5c7eb6: Added `backstage.role` to `package.json`
+- Updated dependencies
+  - @backstage/backend-common@0.10.8
+  - @backstage/catalog-model@0.10.0
+  - @backstage/cli-common@0.1.7
+  - @backstage/config@0.1.14
+  - @backstage/techdocs-common@0.11.8
+
+## 0.8.13
+
+### Patch Changes
+
+- b70c186194: Updated the HTTP server to allow for simplification of the development of the CLI itself.
+- Updated dependencies
+  - @backstage/backend-common@0.10.7
+  - @backstage/techdocs-common@0.11.7
+
+## 0.8.13-next.0
+
+### Patch Changes
+
+- b70c186194: Updated the HTTP server to allow for simplification of the development of the CLI itself.
+- Updated dependencies
+  - @backstage/backend-common@0.10.7-next.0
+  - @backstage/techdocs-common@0.11.7-next.0
+
+## 0.8.12
+
+### Patch Changes
+
+- 14472509a3: Use a local file dependency for techdocs-cli-embedded-app, to ensure that it's always pulled out of the workspace
+- Updated dependencies
+  - @backstage/backend-common@0.10.6
+  - @backstage/techdocs-common@0.11.6
+
+## 0.8.12-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.10.6-next.0
+  - @backstage/techdocs-common@0.11.6-next.0
+
+## 0.8.12-next.0
+
+### Patch Changes
+
+- 14472509a3: Use a local file dependency for techdocs-cli-embedded-app, to ensure that it's always pulled out of the workspace
+
+## 0.8.11
+
+### Patch Changes
+
+- 10086f5873: Bumped `react-dev-utils` from `^12.0.0-next.47` to `^12.0.0-next.60`.
+- Updated dependencies
+  - @backstage/techdocs-common@0.11.5
+  - @backstage/backend-common@0.10.5
+
+## 0.8.11-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.10.4-next.0
+  - @backstage/config@0.1.13-next.0
+  - @backstage/techdocs-common@0.11.4-next.0
+  - @backstage/catalog-model@0.9.10-next.0
+
+## 0.8.10
+
+### Patch Changes
+
+- 8fbc988bfc: remove internal and inline CSS from index.html
+- Updated dependencies
+  - @backstage/techdocs-common@0.11.2
+  - @backstage/backend-common@0.10.1
+
+## 0.8.9
+
+### Patch Changes
+
+- 5fdc8df0e8: The `index.html` template was updated to use the new `config` global.
+- Updated dependencies
+  - @backstage/backend-common@0.10.0
+  - @backstage/techdocs-common@0.11.1
+
+## 0.8.8
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.9.13
+  - @backstage/techdocs-common@0.11.0
+
 ## 0.8.7
 
 ### Patch Changes
@@ -93,10 +260,10 @@
 
   #### :house: Internal
 
-  - `embedded-techdocs-app`
-    - [#122](https://github.com/backstage/techdocs-cli/pull/122) chore(deps-dev): bump @types/node from 12.20.20 to 16.7.1 in /packages/embedded-techdocs-app ([@dependabot[bot]](https://github.com/apps/dependabot))
-    - [#120](https://github.com/backstage/techdocs-cli/pull/120) chore(deps-dev): bump @types/react-dom from 16.9.14 to 17.0.9 in /packages/embedded-techdocs-app ([@dependabot[bot]](https://github.com/apps/dependabot))
-    - [#119](https://github.com/backstage/techdocs-cli/pull/119) chore(deps-dev): bump @testing-library/user-event from 12.8.3 to 13.2.1 in /packages/embedded-techdocs-app ([@dependabot[bot]](https://github.com/apps/dependabot))
+  - `techdocs-cli-embedded-app`
+    - [#122](https://github.com/backstage/techdocs-cli/pull/122) chore(deps-dev): bump @types/node from 12.20.20 to 16.7.1 in /packages/techdocs-cli-embedded-app ([@dependabot[bot]](https://github.com/apps/dependabot))
+    - [#120](https://github.com/backstage/techdocs-cli/pull/120) chore(deps-dev): bump @types/react-dom from 16.9.14 to 17.0.9 in /packages/techdocs-cli-embedded-app ([@dependabot[bot]](https://github.com/apps/dependabot))
+    - [#119](https://github.com/backstage/techdocs-cli/pull/119) chore(deps-dev): bump @testing-library/user-event from 12.8.3 to 13.2.1 in /packages/techdocs-cli-embedded-app ([@dependabot[bot]](https://github.com/apps/dependabot))
     - [#118](https://github.com/backstage/techdocs-cli/pull/118) chore(deps-dev): bump @testing-library/react from 10.4.9 to 12.0.0 ([@dependabot[bot]](https://github.com/apps/dependabot))
   - Other
     - [#117](https://github.com/backstage/techdocs-cli/pull/117) chore(deps): bump @backstage/plugin-catalog from 0.6.11 to 0.6.12 ([@dependabot[bot]](https://github.com/apps/dependabot))

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { InfoCard, InfoCardVariants } from '../../layout/InfoCard';
+import React, { ReactNode } from 'react';
 import { BottomLinkProps } from '../../layout/BottomLink';
+import { InfoCard, InfoCardVariants } from '../../layout/InfoCard';
 import { Gauge, GaugePropsGetColor } from './Gauge';
 
 type Props = {
@@ -26,6 +26,8 @@ type Props = {
   variant?: InfoCardVariants;
   /** Progress in % specified as decimal, e.g. "0.23" */
   progress: number;
+  description?: ReactNode;
+  icon?: ReactNode;
   inverse?: boolean;
   deepLink?: BottomLinkProps;
   getColor?: GaugePropsGetColor;
@@ -44,14 +46,29 @@ const useStyles = makeStyles(
   { name: 'BackstageGaugeCard' },
 );
 
-/** @public */
+/**
+ * {@link Gauge} with header, subheader and footer
+ *
+ * @public
+ *
+ */
 export function GaugeCard(props: Props) {
   const classes = useStyles(props);
-  const { title, subheader, progress, inverse, deepLink, variant, getColor } =
-    props;
+  const {
+    title,
+    subheader,
+    progress,
+    inverse,
+    deepLink,
+    description,
+    icon,
+    variant,
+    getColor,
+  } = props;
 
   const gaugeProps = {
     inverse,
+    description,
     getColor,
     value: progress,
   };
@@ -63,6 +80,7 @@ export function GaugeCard(props: Props) {
         subheader={subheader}
         deepLink={deepLink}
         variant={variant}
+        icon={icon}
       >
         <Gauge {...gaugeProps} />
       </InfoCard>

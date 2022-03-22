@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader, { CardHeaderProps } from '@material-ui/core/CardHeader';
 import Divider from '@material-ui/core/Divider';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
-import { ErrorBoundary, ErrorBoundaryProps } from '../ErrorBoundary';
+import React, { ReactNode } from 'react';
 import { BottomLink, BottomLinkProps } from '../BottomLink';
+import { ErrorBoundary, ErrorBoundaryProps } from '../ErrorBoundary';
 
 /** @public */
 export type InfoCardClassKey =
@@ -55,6 +55,9 @@ const useStyles = makeStyles(
     headerAvatar: {},
     headerAction: {},
     headerContent: {},
+    subheader: {
+      display: 'flex',
+    },
   }),
   { name: 'BackstageInfoCard' },
 );
@@ -134,6 +137,7 @@ type Props = {
   children?: ReactNode;
   headerStyle?: object;
   headerProps?: CardHeaderProps;
+  icon?: ReactNode;
   action?: ReactNode;
   actionsClassName?: string;
   actions?: ReactNode;
@@ -144,7 +148,12 @@ type Props = {
   titleTypographyProps?: object;
 };
 
-/** @public */
+/**
+ * Material-ui card with header , content and actions footer
+ *
+ * @public
+ *
+ */
 export function InfoCard(props: Props): JSX.Element {
   const {
     title,
@@ -157,6 +166,7 @@ export function InfoCard(props: Props): JSX.Element {
     children,
     headerStyle,
     headerProps,
+    icon,
     action,
     actionsClassName,
     actions,
@@ -189,6 +199,15 @@ export function InfoCard(props: Props): JSX.Element {
     });
   }
 
+  const cardSubTitle = () => {
+    return (
+      <div className={classes.headerSubheader}>
+        {subheader && <div className={classes.subheader}>{subheader}</div>}
+        {icon}
+      </div>
+    );
+  };
+
   const errProps: ErrorBoundaryProps =
     errorBoundaryProps || (slackChannel ? { slackChannel } : {});
 
@@ -206,7 +225,7 @@ export function InfoCard(props: Props): JSX.Element {
               content: classes.headerContent,
             }}
             title={title}
-            subheader={subheader}
+            subheader={cardSubTitle()}
             action={action}
             style={{ ...headerStyle }}
             titleTypographyProps={titleTypographyProps}

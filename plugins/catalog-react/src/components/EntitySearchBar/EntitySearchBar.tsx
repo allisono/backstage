@@ -25,9 +25,12 @@ import {
 import Clear from '@material-ui/icons/Clear';
 import Search from '@material-ui/icons/Search';
 import React, { useState } from 'react';
-import { useDebounce } from 'react-use';
-import { useEntityListProvider } from '../../hooks/useEntityListProvider';
+import useDebounce from 'react-use/lib/useDebounce';
+import { useEntityList } from '../../hooks/useEntityListProvider';
 import { EntityTextFilter } from '../../filters';
+
+/** @public */
+export type CatalogReactEntitySearchBarClassKey = 'searchToolbar' | 'input';
 
 const useStyles = makeStyles(
   _theme => ({
@@ -42,10 +45,14 @@ const useStyles = makeStyles(
   },
 );
 
+/**
+ * Renders search bar for filtering the entity list.
+ * @public
+ */
 export const EntitySearchBar = () => {
   const classes = useStyles();
 
-  const { filters, updateFilters } = useEntityListProvider();
+  const { filters, updateFilters } = useEntityList();
   const [search, setSearch] = useState(filters.text?.value ?? '');
 
   useDebounce(
@@ -62,6 +69,7 @@ export const EntitySearchBar = () => {
     <Toolbar className={classes.searchToolbar}>
       <FormControl>
         <Input
+          aria-label="search"
           id="input-with-icon-adornment"
           className={classes.input}
           placeholder="Search"

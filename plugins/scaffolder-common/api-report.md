@@ -5,15 +5,36 @@
 ```ts
 import { Entity } from '@backstage/catalog-model';
 import { JsonObject } from '@backstage/types';
-import { JSONSchema } from '@backstage/catalog-model';
+import { JsonValue } from '@backstage/types';
+import { KindValidator } from '@backstage/catalog-model';
 
-// @public (undocumented)
-export interface TemplateEntityV1beta3 extends Entity {
-  // (undocumented)
+// @public
+export type TaskSpec = TaskSpecV1beta3;
+
+// @public
+export interface TaskSpecV1beta3 {
   apiVersion: 'scaffolder.backstage.io/v1beta3';
-  // (undocumented)
+  output: {
+    [name: string]: JsonValue;
+  };
+  parameters: JsonObject;
+  steps: TaskStep[];
+  templateInfo?: TemplateInfo;
+}
+
+// @public
+export interface TaskStep {
+  action: string;
+  id: string;
+  if?: string | boolean;
+  input?: JsonObject;
+  name: string;
+}
+
+// @public
+export interface TemplateEntityV1beta3 extends Entity {
+  apiVersion: 'scaffolder.backstage.io/v1beta3';
   kind: 'Template';
-  // (undocumented)
   spec: {
     type: string;
     parameters?: JsonObject | JsonObject[];
@@ -31,6 +52,12 @@ export interface TemplateEntityV1beta3 extends Entity {
   };
 }
 
-// @public (undocumented)
-export const templateEntityV1beta3Schema: JSONSchema;
+// @public
+export const templateEntityV1beta3Validator: KindValidator;
+
+// @public
+export type TemplateInfo = {
+  entityRef: string;
+  baseUrl?: string;
+};
 ```

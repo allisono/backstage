@@ -12,7 +12,7 @@ nav:
       - Vision: 'overview/vision.md'
       - The Spotify Story: 'overview/background.md'
       - Strategies for adopting: 'overview/adopting.md'
-      - Stability Index: 'overview/stability-index.md'
+      - Release & Versioning Policy: 'overview/versioning-policy.md'
       - Support and community: 'overview/support.md'
       - Glossary: 'overview/glossary.md'
       - Logo assets: 'overview/logos.md'
@@ -30,6 +30,7 @@ nav:
   - Local Development:
       - CLI:
           - Overview: 'local-dev/cli-overview.md'
+          - Build System: 'local-dev/cli-build-system.md'
           - Commands: 'local-dev/cli-commands.md'
       - Linking in Local Packages: 'local-dev/linking-local-packages.md'
   - Core Features:
@@ -64,6 +65,7 @@ nav:
       - Backstage Search:
           - Overview: 'features/search/README.md'
           - Getting Started: 'features/search/getting-started.md'
+          - Getting Started, configuring Backstage: 'features/search/configuration.md'
           - Concepts: 'features/search/concepts.md'
           - Search Architecture: 'features/search/architecture.md'
           - Search Engines: 'features/search/search-engines.md'
@@ -125,7 +127,6 @@ nav:
       - Testing:
           - Testing with Jest: 'plugins/testing.md'
       - Publishing:
-          - Publishing: 'plugins/publishing.md'
           - Publish private: 'plugins/publish-private.md'
           - Add to Marketplace: 'plugins/add-to-marketplace.md'
           - Observability: 'plugins/observability.md'
@@ -144,6 +145,7 @@ nav:
           - Google: 'auth/google/provider.md'
           - Okta: 'auth/okta/provider.md'
           - OneLogin: 'auth/onelogin/provider.md'
+          - OAuth2Proxy: 'auth/oauth2-proxy/provider.md'
           - Bitbucket: 'auth/bitbucket/provider.md'
       - Adding authentication providers: 'auth/add-auth-provider.md'
       - Using authentication and identity: 'auth/using-auth.md'
@@ -168,6 +170,7 @@ nav:
       - Deprecations: 'api/deprecations.md'
   - Tutorials:
       - Future developer journey: 'tutorials/journey.md'
+      - Package Role Migration: 'tutorials/package-role-migration.md'
       - Migrating away from @backstage/core: 'tutorials/migrating-away-from-core.md'
       - Adding Custom Plugin to Existing Monorepo App: 'tutorials/quickstart-app-plugin.md'
       - Switching Backstage from SQLite to PostgreSQL: 'tutorials/switching-sqlite-postgres.md'
@@ -185,6 +188,8 @@ nav:
       - ADR009 - Entity References: 'architecture-decisions/adr009-entity-references.md'
       - ADR010 - Luxon Date Library: 'architecture-decisions/adr010-luxon-date-library.md'
       - ADR011 - Plugin Package Structure: 'architecture-decisions/adr011-plugin-package-structure.md'
+      - ADR012 - Plugin Package Structure: 'architecture-decisions/adr012-use-luxon-locale-and-date-presets.md'
+      - ADR013 - Plugin Package Structure: 'architecture-decisions/adr013-use-node-fetch.md'
   - Support:
       - Backstage Project Structure: 'support/project-structure.md'
   - Glossary: glossary.md

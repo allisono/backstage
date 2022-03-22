@@ -16,7 +16,7 @@
 
 import chalk from 'chalk';
 import { Command } from 'commander';
-import inquirer, { Answers, Question } from 'inquirer';
+import inquirer, { Answers } from 'inquirer';
 import { resolve as resolvePath } from 'path';
 import { findPaths } from '@backstage/cli-common';
 import os from 'os';
@@ -30,11 +30,11 @@ import {
   templatingTask,
 } from './lib/tasks';
 
-export default async (cmd: Command, version: string): Promise<void> => {
+export default async (cmd: Command): Promise<void> => {
   /* eslint-disable-next-line no-restricted-syntax */
   const paths = findPaths(__dirname);
 
-  const questions: Question[] = [
+  const answers: Answers = await inquirer.prompt([
     {
       type: 'input',
       name: 'name',
@@ -54,11 +54,9 @@ export default async (cmd: Command, version: string): Promise<void> => {
       type: 'list',
       name: 'dbType',
       message: chalk.blue('Select database for the backend [required]'),
-      // @ts-ignore
       choices: ['SQLite', 'PostgreSQL'],
     },
-  ];
-  const answers: Answers = await inquirer.prompt(questions);
+  ]);
   answers.dbTypePG = answers.dbType === 'PostgreSQL';
   answers.dbTypeSqlite = answers.dbType === 'SQLite';
 
@@ -82,7 +80,7 @@ export default async (cmd: Command, version: string): Promise<void> => {
       await checkPathExistsTask(appDir);
 
       Task.section('Preparing files');
-      await templatingTask(templateDir, cmd.path, answers, version);
+      await templatingTask(templateDir, cmd.path, answers);
     } else {
       // Template to temporary location, and then move files
 
@@ -93,7 +91,7 @@ export default async (cmd: Command, version: string): Promise<void> => {
       await createTemporaryAppFolderTask(tempDir);
 
       Task.section('Preparing files');
-      await templatingTask(templateDir, tempDir, answers, version);
+      await templatingTask(templateDir, tempDir, answers);
 
       Task.section('Moving to final location');
       await moveAppTask(tempDir, appDir, answers.name);

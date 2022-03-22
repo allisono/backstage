@@ -32,27 +32,29 @@ describe('compileConfigSchemas', () => {
       errors: [
         {
           keyword: 'type',
-          dataPath: '/a',
+          instancePath: '/a',
           schemaPath: '#/properties/a/type',
-          message: 'should be string',
+          message: 'must be string',
           params: { type: 'string' },
         },
       ],
       visibilityByDataPath: new Map(),
       visibilityBySchemaPath: new Map(),
+      deprecationByDataPath: new Map(),
     });
     expect(validate([{ data: { b: 'b' }, context: 'test' }])).toEqual({
       errors: [
         {
           keyword: 'type',
-          dataPath: '/b',
+          instancePath: '/b',
           schemaPath: '#/properties/b/type',
-          message: 'should be number',
+          message: 'must be number',
           params: { type: 'number' },
         },
       ],
       visibilityByDataPath: new Map(),
       visibilityBySchemaPath: new Map(),
+      deprecationByDataPath: new Map(),
     });
   });
 
@@ -112,6 +114,7 @@ describe('compileConfigSchemas', () => {
           '/properties/d/items': 'frontend',
         }),
       ),
+      deprecationByDataPath: new Map(),
     });
   });
 
@@ -136,5 +139,35 @@ describe('compileConfigSchemas', () => {
     ).toThrow(
       "Config schema visibility is both 'frontend' and 'secret' for properties/a/visibility",
     );
+  });
+
+  it('should discover deprecations', () => {
+    const validate = compileConfigSchemas([
+      {
+        path: 'a1',
+        value: {
+          type: 'object',
+          properties: {
+            a: { type: 'string', deprecated: 'deprecation reason for a' },
+            b: { type: 'string', deprecated: 'deprecation reason for b' },
+            c: { type: 'string' },
+          },
+        },
+      },
+    ]);
+    expect(
+      validate([
+        { data: { a: 'a', b: 'b', c: 'c', d: ['d'] }, context: 'test' },
+      ]),
+    ).toEqual({
+      deprecationByDataPath: new Map(
+        Object.entries({
+          '/a': 'deprecation reason for a',
+          '/b': 'deprecation reason for b',
+        }),
+      ),
+      visibilityByDataPath: new Map(),
+      visibilityBySchemaPath: new Map(),
+    });
   });
 });

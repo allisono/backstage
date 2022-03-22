@@ -19,6 +19,8 @@ import { trimEnd } from 'lodash';
 
 /**
  * The configuration parameters for a single Microsoft Graph provider.
+ *
+ * @public
  */
 export type MicrosoftGraphProviderConfig = {
   /**
@@ -42,8 +44,6 @@ export type MicrosoftGraphProviderConfig = {
   clientId: string;
   /**
    * The OAuth client secret to use for authenticating requests.
-   *
-   * @visibility secret
    */
   clientSecret: string;
   /**
@@ -53,19 +53,59 @@ export type MicrosoftGraphProviderConfig = {
    */
   userFilter?: string;
   /**
+   * The "expand" argument to apply to users.
+   *
+   * E.g. "manager"
+   */
+  userExpand?: string;
+  /**
    * The filter to apply to extract users by groups memberships.
    *
    * E.g. "displayName eq 'Backstage Users'"
    */
   userGroupMemberFilter?: string;
   /**
+   * The search criteria to apply to extract users by groups memberships.
+   *
+   * E.g. "\"displayName:-team\"" would only match groups which contain '-team'
+   */
+  userGroupMemberSearch?: string;
+  /**
+   * The "expand" argument to apply to groups.
+   *
+   * E.g. "member"
+   */
+  groupExpand?: string;
+  /**
    * The filter to apply to extract groups.
    *
    * E.g. "securityEnabled eq false and mailEnabled eq true"
    */
   groupFilter?: string;
+  /**
+   * The search criteria to apply to extract groups.
+   *
+   * E.g. "\"displayName:-team\"" would only match groups which contain '-team'
+   */
+  groupSearch?: string;
+  /**
+   * By default, the Microsoft Graph API only provides the basic feature set
+   * for querying. Certain features are limited to advanced query capabilities
+   * (see https://docs.microsoft.com/en-us/graph/aad-advanced-queries)
+   * and need to be enabled.
+   *
+   * Some features like `$expand` are not available for advanced queries, though.
+   */
+  queryMode?: 'basic' | 'advanced';
 };
 
+/**
+ * Parses configuration.
+ *
+ * @param config - The root of the msgraph config hierarchy
+ *
+ * @public
+ */
 export function readMicrosoftGraphConfig(
   config: Config,
 ): MicrosoftGraphProviderConfig[] {
@@ -81,16 +121,37 @@ export function readMicrosoftGraphConfig(
     const tenantId = providerConfig.getString('tenantId');
     const clientId = providerConfig.getString('clientId');
     const clientSecret = providerConfig.getString('clientSecret');
+
+    const userExpand = providerConfig.getOptionalString('userExpand');
     const userFilter = providerConfig.getOptionalString('userFilter');
     const userGroupMemberFilter = providerConfig.getOptionalString(
       'userGroupMemberFilter',
     );
+    const userGroupMemberSearch = providerConfig.getOptionalString(
+      'userGroupMemberSearch',
+    );
+    const groupExpand = providerConfig.getOptionalString('groupExpand');
     const groupFilter = providerConfig.getOptionalString('groupFilter');
+    const groupSearch = providerConfig.getOptionalString('groupSearch');
 
     if (userFilter && userGroupMemberFilter) {
       throw new Error(
         `userFilter and userGroupMemberFilter are mutually exclusive, only one can be specified.`,
       );
+    }
+    if (userFilter && userGroupMemberSearch) {
+      throw new Error(
+        `userGroupMemberSearch cannot be specified when userFilter is defined.`,
+      );
+    }
+
+    const queryMode = providerConfig.getOptionalString('queryMode');
+    if (
+      queryMode !== undefined &&
+      queryMode !== 'basic' &&
+      queryMode !== 'advanced'
+    ) {
+      throw new Error(`queryMode must be one of: basic, advanced`);
     }
 
     providers.push({
@@ -99,9 +160,14 @@ export function readMicrosoftGraphConfig(
       tenantId,
       clientId,
       clientSecret,
+      userExpand,
       userFilter,
       userGroupMemberFilter,
+      userGroupMemberSearch,
+      groupExpand,
       groupFilter,
+      groupSearch,
+      queryMode,
     });
   }
 

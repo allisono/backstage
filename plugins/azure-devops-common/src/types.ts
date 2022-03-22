@@ -145,6 +145,7 @@ export interface DashboardPullRequest {
 export interface Reviewer {
   id?: string;
   displayName?: string;
+  uniqueName?: string;
   imageUrl?: string;
   isRequired?: boolean;
   isContainer?: boolean;
@@ -164,6 +165,8 @@ export interface CreatedBy {
   displayName?: string;
   uniqueName?: string;
   imageUrl?: string;
+  teamIds?: string[];
+  teamNames?: string[];
 }
 
 export interface Repository {
@@ -175,7 +178,16 @@ export interface Repository {
 export interface Team {
   id?: string;
   name?: string;
-  memberIds?: string[];
+  projectId?: string;
+  projectName?: string;
+  members?: string[];
+}
+
+export interface TeamMember {
+  id?: string;
+  displayName?: string;
+  uniqueName?: string;
+  memberOf?: string[];
 }
 
 /**
@@ -251,3 +263,19 @@ export enum PullRequestVoteStatus {
   WaitingForAuthor = -5,
   Rejected = -10,
 }
+export type BuildRun = {
+  id?: number;
+  title: string;
+  link?: string;
+  status?: BuildStatus;
+  result?: BuildResult;
+  queueTime?: string;
+  startTime?: string;
+  finishTime?: string;
+  source: string;
+  uniqueName?: string;
+};
+
+export type BuildRunOptions = {
+  top?: number;
+};

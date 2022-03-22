@@ -1,5 +1,139 @@
 # @backstage/config-loader
 
+## 1.0.1-next.0
+
+### Patch Changes
+
+- e0a51384ac: build(deps): bump `ajv` from 7.0.3 to 8.10.0
+- c47509e1a0: Implemented changes suggested by Deepsource.io including multiple double non-null assertion operators and unexpected awaits for non-promise values.
+
+## 1.0.0
+
+### Major Changes
+
+- b58c70c223: This package has been promoted to v1.0! To understand how this change affects the package, please check out our [versioning policy](https://backstage.io/docs/overview/versioning-policy).
+
+### Patch Changes
+
+- 664821371e: The `typescript-json-schema` dependency that is used during schema collection is now lazy loaded, as it eagerly loads in the TypeScript compiler.
+- f910c2a3f8: build(deps): bump `typescript-json-schema` from 0.52.0 to 0.53.0
+- Updated dependencies
+  - @backstage/config@1.0.0
+  - @backstage/errors@1.0.0
+  - @backstage/types@1.0.0
+
+## 0.9.7
+
+### Patch Changes
+
+- e0a69ba49f: build(deps): bump `fs-extra` from 9.1.0 to 10.0.1
+
+## 0.9.7-next.0
+
+### Patch Changes
+
+- e0a69ba49f: build(deps): bump `fs-extra` from 9.1.0 to 10.0.1
+
+## 0.9.6
+
+### Patch Changes
+
+- c3a1300f79: Include any files included in configuration via $include or $file directives when watching for configuration changes.
+
+## 0.9.5
+
+### Patch Changes
+
+- Fix for the previous release with missing type declarations.
+- Updated dependencies
+  - @backstage/cli-common@0.1.8
+  - @backstage/config@0.1.15
+  - @backstage/errors@0.2.2
+  - @backstage/types@0.1.3
+
+## 0.9.4
+
+### Patch Changes
+
+- 1ed305728b: Bump `node-fetch` to version 2.6.7 and `cross-fetch` to version 3.1.5
+- c77c5c7eb6: Added `backstage.role` to `package.json`
+- Updated dependencies
+  - @backstage/errors@0.2.1
+  - @backstage/cli-common@0.1.7
+  - @backstage/config@0.1.14
+  - @backstage/types@0.1.2
+
+## 0.9.3
+
+### Patch Changes
+
+- f685e1398f: Loading of app configurations now reference the `@deprecated` construct from
+  JSDoc to determine if a property in-use has been deprecated. Users are notified
+  of deprecated keys in the format:
+
+  ```txt
+  The configuration key 'catalog.processors.githubOrg' of app-config.yaml is deprecated and may be removed soon. Configure a GitHub integration instead.
+  ```
+
+  When the `withDeprecatedKeys` option is set to `true` in the `process` method
+  of `loadConfigSchema`, the user will be notified that deprecated keys have been
+  identified in their app configuration.
+
+  The `backend-common` and `plugin-app-backend` packages have been updated to set
+  `withDeprecatedKeys` to true so that users are notified of deprecated settings
+  by default.
+
+- Updated dependencies
+  - @backstage/config@0.1.13
+
+## 0.9.3-next.0
+
+### Patch Changes
+
+- f685e1398f: Loading of app configurations now reference the `@deprecated` construct from
+  JSDoc to determine if a property in-use has been deprecated. Users are notified
+  of deprecated keys in the format:
+
+  ```txt
+  The configuration key 'catalog.processors.githubOrg' of app-config.yaml is deprecated and may be removed soon. Configure a GitHub integration instead.
+  ```
+
+  When the `withDeprecatedKeys` option is set to `true` in the `process` method
+  of `loadConfigSchema`, the user will be notified that deprecated keys have been
+  identified in their app configuration.
+
+  The `backend-common` and `plugin-app-backend` packages have been updated to set
+  `withDeprecatedKeys` to true so that users are notified of deprecated settings
+  by default.
+
+- Updated dependencies
+  - @backstage/config@0.1.13-next.0
+
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/config@0.1.12
+  - @backstage/errors@0.2.0
+
+## 0.9.1
+
+### Patch Changes
+
+- 84663d59a3: Bump `typescript-json-schema` from `^0.51.0` to `^0.52.0`.
+
+## 0.9.0
+
+### Minor Changes
+
+- f6722d2458: Removed deprecated option `env` from `LoadConfigOptions` and associated tests
+- 67d6cb3c7e: Removed deprecated option `configPaths` as it has been superseded by `configTargets`
+
+### Patch Changes
+
+- 1e7070443d: In case remote.reloadIntervalSeconds is passed, it must be a valid positive value
+
 ## 0.8.1
 
 ### Patch Changes

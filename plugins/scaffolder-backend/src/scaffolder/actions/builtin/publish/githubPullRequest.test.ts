@@ -16,27 +16,37 @@
 
 import { getRootLogger } from '@backstage/backend-common';
 import { ConfigReader } from '@backstage/config';
-import { ScmIntegrations } from '@backstage/integration';
+import {
+  GithubCredentialsProvider,
+  ScmIntegrations,
+} from '@backstage/integration';
 import mockFs from 'mock-fs';
 import os from 'os';
 import { resolve as resolvePath } from 'path';
 import { Writable } from 'stream';
 import { ActionContext, TemplateAction } from '../../types';
 import {
-  ClientFactoryInput,
+  CreateGithubPullRequestClientFactoryInput,
   createPublishGithubPullRequestAction,
-  GithubPullRequestActionInput,
-  PullRequestCreator,
+  OctokitWithPullRequestPluginClient,
 } from './githubPullRequest';
 
 const root = os.platform() === 'win32' ? 'C:\\root' : '/root';
 const workspacePath = resolvePath(root, 'my-workspace');
 
+type GithubPullRequestActionInput = ReturnType<
+  typeof createPublishGithubPullRequestAction
+> extends TemplateAction<infer U>
+  ? U
+  : never;
+
 describe('createPublishGithubPullRequestAction', () => {
   let instance: TemplateAction<GithubPullRequestActionInput>;
-  let fakeClient: PullRequestCreator;
+  let fakeClient: OctokitWithPullRequestPluginClient;
 
-  let clientFactory: (input: ClientFactoryInput) => Promise<PullRequestCreator>;
+  let clientFactory: (
+    input: CreateGithubPullRequestClientFactoryInput,
+  ) => Promise<OctokitWithPullRequestPluginClient>;
 
   beforeEach(() => {
     const integrations = ScmIntegrations.fromConfig(new ConfigReader({}));
@@ -48,14 +58,19 @@ describe('createPublishGithubPullRequestAction', () => {
           status: 201,
           data: {
             html_url: 'https://github.com/myorg/myrepo/pull/123',
+            number: 123,
           },
         };
       }),
     };
     clientFactory = jest.fn(async () => fakeClient);
+    const githubCredentialsProvider: GithubCredentialsProvider = {
+      getCredentials: jest.fn(),
+    };
 
     instance = createPublishGithubPullRequestAction({
       integrations,
+      githubCredentialsProvider,
       clientFactory,
     });
   });
@@ -109,13 +124,14 @@ describe('createPublishGithubPullRequestAction', () => {
       });
     });
 
-    it('creates outputs for the url', async () => {
+    it('creates outputs for the pull request url and number', async () => {
       await instance.handler(ctx);
 
       expect(ctx.output).toHaveBeenCalledWith(
         'remoteUrl',
         'https://github.com/myorg/myrepo/pull/123',
       );
+      expect(ctx.output).toHaveBeenCalledWith('pullRequestNumber', 123);
     });
     afterEach(() => {
       mockFs.restore();
@@ -240,13 +256,14 @@ describe('createPublishGithubPullRequestAction', () => {
       });
     });
 
-    it('creates outputs for the url', async () => {
+    it('creates outputs for the pull request url and number', async () => {
       await instance.handler(ctx);
 
       expect(ctx.output).toHaveBeenCalledWith(
         'remoteUrl',
         'https://github.com/myorg/myrepo/pull/123',
       );
+      expect(ctx.output).toHaveBeenCalledWith('pullRequestNumber', 123);
     });
     afterEach(() => {
       mockFs.restore();
@@ -308,13 +325,14 @@ describe('createPublishGithubPullRequestAction', () => {
       });
     });
 
-    it('creates outputs for the url', async () => {
+    it('creates outputs for the pull request url and number', async () => {
       await instance.handler(ctx);
 
       expect(ctx.output).toHaveBeenCalledWith(
         'remoteUrl',
         'https://github.com/myorg/myrepo/pull/123',
       );
+      expect(ctx.output).toHaveBeenCalledWith('pullRequestNumber', 123);
     });
     afterEach(() => {
       mockFs.restore();
@@ -376,13 +394,14 @@ describe('createPublishGithubPullRequestAction', () => {
       });
     });
 
-    it('creates outputs for the url', async () => {
+    it('creates outputs for the pull request url and number', async () => {
       await instance.handler(ctx);
 
       expect(ctx.output).toHaveBeenCalledWith(
         'remoteUrl',
         'https://github.com/myorg/myrepo/pull/123',
       );
+      expect(ctx.output).toHaveBeenCalledWith('pullRequestNumber', 123);
     });
     afterEach(() => {
       mockFs.restore();

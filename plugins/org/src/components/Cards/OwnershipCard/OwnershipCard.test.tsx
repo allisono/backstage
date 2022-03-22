@@ -14,17 +14,111 @@
  * limitations under the License.
  */
 
-import { GroupEntity, UserEntity } from '@backstage/catalog-model';
+import {
+  GetEntitiesRequest,
+  GetEntitiesResponse,
+} from '@backstage/catalog-client';
+import { Entity, GroupEntity, UserEntity } from '@backstage/catalog-model';
 import {
   CatalogApi,
   catalogApiRef,
   EntityProvider,
-  catalogRouteRef,
 } from '@backstage/plugin-catalog-react';
 import { renderInTestApp, TestApiProvider } from '@backstage/test-utils';
 import { queryByText } from '@testing-library/react';
 import React from 'react';
+import { catalogIndexRouteRef } from '../../../routes';
 import { OwnershipCard } from './OwnershipCard';
+
+const items = [
+  {
+    apiVersion: 'backstage.io/v1alpha1',
+    kind: 'API',
+    metadata: {
+      name: 'my-api',
+    },
+    spec: {
+      type: 'openapi',
+    },
+    relations: [
+      {
+        type: 'ownedBy',
+        targetRef: 'group:default/my-team',
+        target: {
+          name: 'my-team',
+          namespace: 'default',
+          kind: 'group',
+        },
+      },
+    ],
+  },
+  {
+    kind: 'Component',
+    metadata: {
+      name: 'my-service',
+    },
+    spec: {
+      type: 'service',
+    },
+    relations: [
+      {
+        type: 'ownedBy',
+        targetRef: 'group:default/my-team',
+        target: {
+          name: 'my-team',
+          namespace: 'default',
+          kind: 'group',
+        },
+      },
+    ],
+  },
+  {
+    kind: 'Component',
+    metadata: {
+      name: 'my-library',
+      namespace: 'other-namespace',
+    },
+    spec: {
+      type: 'library',
+    },
+    relations: [
+      {
+        type: 'ownedBy',
+        targetRef: 'group:default/my-team',
+        target: {
+          name: 'my-team',
+          namespace: 'default',
+          kind: 'group',
+        },
+      },
+    ],
+  },
+  {
+    apiVersion: 'backstage.io/v1alpha1',
+    kind: 'System',
+    metadata: {
+      name: 'my-system',
+    },
+    relations: [
+      {
+        type: 'ownedBy',
+        targetRef: 'group:default/my-team',
+      },
+    ],
+  },
+] as Entity[];
+
+const getEntitiesMock = (
+  request?: GetEntitiesRequest,
+): Promise<GetEntitiesResponse> => {
+  const filterKinds =
+    !Array.isArray(request?.filter) && Array.isArray(request?.filter?.kind)
+      ? request?.filter?.kind ?? []
+      : []; // we expect the request to be like { filter: { kind: ['API','System'], .... }. If changed in OwnerShipCard, let's change in also here
+  return Promise.resolve({
+    items: items.filter(item => filterKinds.find(k => k === item.kind)),
+  } as GetEntitiesResponse);
+};
 
 describe('OwnershipCard', () => {
   const groupEntity: GroupEntity = {
@@ -40,84 +134,17 @@ describe('OwnershipCard', () => {
     relations: [
       {
         type: 'memberOf',
-        target: {
-          kind: 'group',
-          name: 'ExampleGroup',
-          namespace: 'default',
-        },
+        targetRef: 'group:default/examplegroup',
       },
     ],
   };
-
-  const items = [
-    {
-      kind: 'API',
-      metadata: {
-        name: 'my-api',
-      },
-      spec: {
-        type: 'openapi',
-      },
-      relations: [
-        {
-          type: 'ownedBy',
-          target: {
-            name: 'my-team',
-            namespace: 'default',
-            kind: 'Group',
-          },
-        },
-      ],
-    },
-    {
-      kind: 'Component',
-      metadata: {
-        name: 'my-service',
-      },
-      spec: {
-        type: 'service',
-      },
-      relations: [
-        {
-          type: 'ownedBy',
-          target: {
-            name: 'my-team',
-            namespace: 'default',
-            kind: 'Group',
-          },
-        },
-      ],
-    },
-    {
-      kind: 'Component',
-      metadata: {
-        name: 'my-library',
-        namespace: 'other-namespace',
-      },
-      spec: {
-        type: 'library',
-      },
-      relations: [
-        {
-          type: 'ownedBy',
-          target: {
-            name: 'my-team',
-            namespace: 'default',
-            kind: 'Group',
-          },
-        },
-      ],
-    },
-  ] as any;
 
   it('displays entity counts', async () => {
     const catalogApi: jest.Mocked<CatalogApi> = {
       getEntities: jest.fn(),
     } as any;
 
-    catalogApi.getEntities.mockResolvedValue({
-      items,
-    });
+    catalogApi.getEntities.mockImplementation(getEntitiesMock);
 
     const { getByText } = await renderInTestApp(
       <TestApiProvider apis={[[catalogApiRef, catalogApi]]}>
@@ -127,10 +154,21 @@ describe('OwnershipCard', () => {
       </TestApiProvider>,
       {
         mountedRoutes: {
-          '/create': catalogRouteRef,
+          '/create': catalogIndexRouteRef,
         },
       },
     );
+
+    expect(catalogApi.getEntities).toHaveBeenCalledWith({
+      filter: { kind: ['Component', 'API'] },
+      fields: [
+        'kind',
+        'metadata.name',
+        'metadata.namespace',
+        'spec.type',
+        'relations',
+      ],
+    });
 
     expect(getByText('OPENAPI')).toBeInTheDocument();
     expect(
@@ -144,6 +182,38 @@ describe('OwnershipCard', () => {
     expect(
       queryByText(getByText('LIBRARY').parentElement!, '1'),
     ).toBeInTheDocument();
+    expect(() => getByText('SYSTEM')).toThrowError();
+  });
+
+  it('applies CustomFilterDefinition', async () => {
+    const catalogApi: jest.Mocked<CatalogApi> = {
+      getEntities: jest.fn(),
+    } as any;
+
+    catalogApi.getEntities.mockImplementation(getEntitiesMock);
+
+    const { getByText } = await renderInTestApp(
+      <TestApiProvider apis={[[catalogApiRef, catalogApi]]}>
+        <EntityProvider entity={groupEntity}>
+          <OwnershipCard entityFilterKind={['API', 'System']} />
+        </EntityProvider>
+      </TestApiProvider>,
+      {
+        mountedRoutes: {
+          '/create': catalogIndexRouteRef,
+        },
+      },
+    );
+
+    expect(getByText('SYSTEM')).toBeInTheDocument();
+    expect(
+      queryByText(getByText('SYSTEM').parentElement!, '1'),
+    ).toBeInTheDocument();
+    expect(getByText('OPENAPI')).toBeInTheDocument();
+    expect(
+      queryByText(getByText('OPENAPI').parentElement!, '1'),
+    ).toBeInTheDocument();
+    expect(() => getByText('LIBRARY')).toThrowError();
   });
 
   it('links to the catalog with the group filter', async () => {
@@ -151,9 +221,7 @@ describe('OwnershipCard', () => {
       getEntities: jest.fn(),
     } as any;
 
-    catalogApi.getEntities.mockResolvedValue({
-      items,
-    });
+    catalogApi.getEntities.mockImplementation(getEntitiesMock);
 
     const { getByText } = await renderInTestApp(
       <TestApiProvider apis={[[catalogApiRef, catalogApi]]}>
@@ -163,14 +231,14 @@ describe('OwnershipCard', () => {
       </TestApiProvider>,
       {
         mountedRoutes: {
-          '/create': catalogRouteRef,
+          '/create': catalogIndexRouteRef,
         },
       },
     );
 
     expect(getByText('OPENAPI').closest('a')).toHaveAttribute(
       'href',
-      '/create/?filters%5Bkind%5D=API&filters%5Btype%5D=openapi&filters%5Bowners%5D%5B0%5D=my-team&filters%5Buser%5D=all',
+      '/create/?filters%5Bkind%5D=API&filters%5Btype%5D=openapi&filters%5Bowners%5D=my-team&filters%5Buser%5D=all',
     );
   });
 
@@ -187,11 +255,7 @@ describe('OwnershipCard', () => {
       relations: [
         {
           type: 'memberOf',
-          target: {
-            kind: 'Group',
-            name: 'my-team',
-            namespace: 'default',
-          },
+          targetRef: 'group:default/my-team',
         },
       ],
     };
@@ -199,9 +263,7 @@ describe('OwnershipCard', () => {
       getEntities: jest.fn(),
     } as any;
 
-    catalogApi.getEntities.mockResolvedValue({
-      items,
-    });
+    catalogApi.getEntities.mockImplementation(getEntitiesMock);
 
     const { getByText } = await renderInTestApp(
       <TestApiProvider apis={[[catalogApiRef, catalogApi]]}>
@@ -211,14 +273,14 @@ describe('OwnershipCard', () => {
       </TestApiProvider>,
       {
         mountedRoutes: {
-          '/create': catalogRouteRef,
+          '/create': catalogIndexRouteRef,
         },
       },
     );
 
     expect(getByText('OPENAPI').closest('a')).toHaveAttribute(
       'href',
-      '/create/?filters%5Bkind%5D=API&filters%5Btype%5D=openapi&filters%5Bowners%5D%5B0%5D=user%3Athe-user&filters%5Bowners%5D%5B1%5D=my-team&filters%5Buser%5D=all',
+      '/create/?filters%5Bkind%5D=API&filters%5Btype%5D=openapi&filters%5Bowners%5D=user%3Athe-user&filters%5Bowners%5D=my-team&filters%5Buser%5D=all',
     );
   });
 });

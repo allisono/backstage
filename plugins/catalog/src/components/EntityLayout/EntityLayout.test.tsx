@@ -21,19 +21,19 @@ import { AlertApi, alertApiRef } from '@backstage/core-plugin-api';
 import {
   AsyncEntityProvider,
   catalogApiRef,
-  DefaultStarredEntitiesApi,
   EntityProvider,
   entityRouteRef,
   starredEntitiesApiRef,
+  MockStarredEntitiesApi,
 } from '@backstage/plugin-catalog-react';
+import { permissionApiRef } from '@backstage/plugin-permission-react';
 import {
-  MockStorageApi,
+  MockPermissionApi,
   renderInTestApp,
   TestApiRegistry,
 } from '@backstage/test-utils';
-import { fireEvent } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 import { Route, Routes } from 'react-router';
 import { EntityLayout } from './EntityLayout';
 
@@ -47,10 +47,8 @@ const mockEntity = {
 const mockApis = TestApiRegistry.from(
   [catalogApiRef, {} as CatalogApi],
   [alertApiRef, {} as AlertApi],
-  [
-    starredEntitiesApiRef,
-    new DefaultStarredEntitiesApi({ storageApi: MockStorageApi.create() }),
-  ],
+  [starredEntitiesApiRef, new MockStarredEntitiesApi()],
+  [permissionApiRef, new MockPermissionApi()],
 );
 
 describe('EntityLayout', () => {

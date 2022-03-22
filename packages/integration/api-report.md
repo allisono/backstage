@@ -30,9 +30,12 @@ export class AwsS3Integration implements ScmIntegration {
 // @public
 export type AwsS3IntegrationConfig = {
   host: string;
+  endpoint?: string;
+  s3ForcePathStyle?: boolean;
   accessKeyId?: string;
   secretAccessKey?: string;
   roleArn?: string;
+  externalId?: string;
 };
 
 // @public
@@ -86,11 +89,22 @@ export class BitbucketIntegration implements ScmIntegration {
 // @public
 export type BitbucketIntegrationConfig = {
   host: string;
-  apiBaseUrl?: string;
+  apiBaseUrl: string;
   token?: string;
   username?: string;
   appPassword?: string;
 };
+
+// @public
+export class DefaultGithubCredentialsProvider
+  implements GithubCredentialsProvider
+{
+  // (undocumented)
+  static fromIntegrations(
+    integrations: ScmIntegrationRegistry,
+  ): DefaultGithubCredentialsProvider;
+  getCredentials(opts: { url: string }): Promise<GithubCredentials>;
+}
 
 // @public
 export function defaultScmResolveUrl(options: {
@@ -98,6 +112,35 @@ export function defaultScmResolveUrl(options: {
   base: string;
   lineNumber?: number;
 }): string;
+
+// @public
+export class GerritIntegration implements ScmIntegration {
+  constructor(integrationConfig: GerritIntegrationConfig);
+  // (undocumented)
+  get config(): GerritIntegrationConfig;
+  // (undocumented)
+  static factory: ScmIntegrationsFactory<GerritIntegration>;
+  // (undocumented)
+  resolveEditUrl(url: string): string;
+  // (undocumented)
+  resolveUrl(options: {
+    url: string;
+    base: string;
+    lineNumber?: number;
+  }): string;
+  // (undocumented)
+  get title(): string;
+  // (undocumented)
+  get type(): string;
+}
+
+// @public
+export type GerritIntegrationConfig = {
+  host: string;
+  baseUrl?: string;
+  username?: string;
+  password?: string;
+};
 
 // @public
 export function getAzureCommitsUrl(url: string): string;
@@ -198,9 +241,8 @@ export type GithubCredentials = {
 };
 
 // @public
-export class GithubCredentialsProvider {
+export interface GithubCredentialsProvider {
   // (undocumented)
-  static create(config: GitHubIntegrationConfig): GithubCredentialsProvider;
   getCredentials(opts: { url: string }): Promise<GithubCredentials>;
 }
 
@@ -281,6 +323,8 @@ export interface IntegrationsByType {
   // (undocumented)
   bitbucket: ScmIntegrationsGroup<BitbucketIntegration>;
   // (undocumented)
+  gerrit: ScmIntegrationsGroup<GerritIntegration>;
+  // (undocumented)
   github: ScmIntegrationsGroup<GitHubIntegration>;
   // (undocumented)
   gitlab: ScmIntegrationsGroup<GitLabIntegration>;
@@ -315,6 +359,16 @@ export function readBitbucketIntegrationConfig(
 export function readBitbucketIntegrationConfigs(
   configs: Config[],
 ): BitbucketIntegrationConfig[];
+
+// @public
+export function readGerritIntegrationConfig(
+  config: Config,
+): GerritIntegrationConfig;
+
+// @public
+export function readGerritIntegrationConfigs(
+  configs: Config[],
+): GerritIntegrationConfig[];
 
 // @public
 export function readGitHubIntegrationConfig(
@@ -369,6 +423,8 @@ export interface ScmIntegrationRegistry
   // (undocumented)
   bitbucket: ScmIntegrationsGroup<BitbucketIntegration>;
   // (undocumented)
+  gerrit: ScmIntegrationsGroup<GerritIntegration>;
+  // (undocumented)
   github: ScmIntegrationsGroup<GitHubIntegration>;
   // (undocumented)
   gitlab: ScmIntegrationsGroup<GitLabIntegration>;
@@ -395,6 +451,8 @@ export class ScmIntegrations implements ScmIntegrationRegistry {
   byUrl(url: string | URL): ScmIntegration | undefined;
   // (undocumented)
   static fromConfig(config: Config): ScmIntegrations;
+  // (undocumented)
+  get gerrit(): ScmIntegrationsGroup<GerritIntegration>;
   // (undocumented)
   get github(): ScmIntegrationsGroup<GitHubIntegration>;
   // (undocumented)
@@ -423,8 +481,12 @@ export interface ScmIntegrationsGroup<T extends ScmIntegration> {
   list(): T[];
 }
 
-// Warnings were encountered during analysis:
-//
-// src/gitlab/config.d.ts:29:68 - (tsdoc-escape-right-brace) The "}" character should be escaped using a backslash to avoid confusion with a TSDoc inline tag
-// src/gitlab/config.d.ts:29:63 - (tsdoc-malformed-inline-tag) Expecting a TSDoc tag starting with "{@"
+// @public
+export class SingleInstanceGithubCredentialsProvider
+  implements GithubCredentialsProvider
+{
+  // (undocumented)
+  static create: (config: GitHubIntegrationConfig) => GithubCredentialsProvider;
+  getCredentials(opts: { url: string }): Promise<GithubCredentials>;
+}
 ```

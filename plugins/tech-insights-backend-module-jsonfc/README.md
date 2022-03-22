@@ -21,14 +21,14 @@ and modify the `techInsights.ts` file to contain a reference to the FactCheckers
 
 +const myFactCheckerFactory = new JsonRulesEngineFactCheckerFactory({
 +   checks: [],
-+   logger,
++   logger: env.logger,
 +}),
 
  const builder = buildTechInsightsContext({
-   logger,
-   config,
-   database,
-   discovery,
+   logger: env.logger,
+   config: env.config,
+   database: env.database,
+   discovery: env.discovery,
    factRetrievers: [myFactRetrieverRegistration],
 +  factCheckerFactory: myFactCheckerFactory
  });
@@ -40,7 +40,7 @@ By default this implementation comes with an in-memory storage to store checks. 
  const myTechInsightCheckRegistry: TechInsightCheckRegistry<MyCheckType> = // snip
  const myFactCheckerFactory = new JsonRulesEngineFactCheckerFactory({
    checks: [],
-   logger,
+   logger: env.logger,
 +  checkRegistry: myTechInsightCheckRegistry
  }),
 
@@ -84,4 +84,35 @@ export const exampleCheck: TechInsightJsonRuleCheck = {
     link: 'https://sonar.mysonarqube.com/increasing-number-value',
   },
 };
+```
+
+# Custom operators
+
+json-rules-engine supports a limited [number of built-in operators](https://github.com/CacheControl/json-rules-engine/blob/master/docs/rules.md#operators) that can be used in conditions. You can add your own operators by adding them to the `operators` array in the `JsonRulesEngineFactCheckerFactory` constructor. For example:
+
+```diff
++ import { Operator } from 'json-rules-engine';
+
+const myFactCheckerFactory = new JsonRulesEngineFactCheckerFactory({
+   checks: [],
+   logger: env.logger,
++  operators: [ new Operator("startsWith", (a, b) => a.startsWith(b) ]
+})
+```
+
+And you can then use it in your checks like this:
+
+```js
+...
+rule: {
+  conditions: {
+    any: [
+      {
+        fact: 'version',
+        operator: 'startsWith',
+        value: '12',
+      },
+    ],
+  },
+}
 ```

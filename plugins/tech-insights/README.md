@@ -35,13 +35,20 @@ const serviceEntityPage = (
     </EntityLayout.Route>
     ...
     <EntityLayout.Route path="/tech-insights" title="Scorecards">
-      <EntityTechInsightsScorecardContent />
+      <EntityTechInsightsScorecardContent
+        title="Customized title for the scorecard"
+        description="Small description about scorecards"
+      />
     </EntityLayout.Route>
     ...
   </EntityLayoutWrapper>
 );
 ```
 
-## Links
+It is not obligatory to pass title and description props to `EntityTechInsightsScorecardContent`. If those are left out, default values from `defaultCheckResultRenderers` in `CheckResultRenderer` will be taken, hence `Boolean scorecard` and `This card represents an overview of default boolean Backstage checks`.
 
-- [The Backstage homepage](https://backstage.io)
+## Boolean Scorecard Example
+
+If you follow the [Backend Example](https://github.com/backstage/backstage/tree/master/plugins/tech-insights-backend#backend-example), once the needed facts have been generated the boolean scorecard will look like this:
+
+![Boolean Scorecard Example](./docs/boolean-scorecard-example.png)

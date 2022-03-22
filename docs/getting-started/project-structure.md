@@ -155,13 +155,13 @@ are separated out into their own folder, see further down.
 - [`integration/`](https://github.com/backstage/backstage/tree/master/packages/integration) -
   Common functionalities of integrations like GitHub, GitLab, etc.
 
-- [`storybook/`](https://github.com/backstage/backstage/tree/master/packages/storybook) -
+- [`storybook/`](https://github.com/backstage/backstage/tree/master/storybook) -
   This folder contains only the Storybook config which helps visualize our
   reusable React components. Stories are within the core package, and are
   published in the [Backstage Storybook](https://backstage.io/storybook).
 
-- [`techdocs-common/`](https://github.com/backstage/backstage/tree/master/packages/techdocs-common) -
-  Common functionalities for TechDocs, to be shared between
+- [`techdocs-node/`](https://github.com/backstage/backstage/tree/master/plugins/techdocs-node) -
+  Common node.js functionalities for TechDocs, to be shared between
   [techdocs-backend](https://github.com/backstage/backstage/tree/master/plugins/techdocs-backend)
   plugin and [techdocs-cli](https://github.com/backstage/techdocs-cli).
 

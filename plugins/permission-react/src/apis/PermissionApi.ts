@@ -15,19 +15,19 @@
  */
 
 import {
-  AuthorizeRequest,
-  AuthorizeResponse,
+  AuthorizeQuery,
+  AuthorizeDecision,
 } from '@backstage/plugin-permission-common';
 import { ApiRef, createApiRef } from '@backstage/core-plugin-api';
 
 /**
- * This API is used by various frontend utilities that allow developers to implement authorization wihtin their frontend
+ * This API is used by various frontend utilities that allow developers to implement authorization within their frontend
  * plugins. A plugin developer will likely not have to interact with this API or its implementations directly, but
  * rather with the aforementioned utility components/hooks.
  * @public
  */
 export type PermissionApi = {
-  authorize(request: AuthorizeRequest): Promise<AuthorizeResponse>;
+  authorize(request: AuthorizeQuery): Promise<AuthorizeDecision>;
 };
 
 /**

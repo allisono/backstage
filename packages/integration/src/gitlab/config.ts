@@ -28,13 +28,13 @@ const GITLAB_API_BASE_URL = 'https://gitlab.com/api/v4';
  */
 export type GitLabIntegrationConfig = {
   /**
-   * The host of the target that this matches on, e.g. "gitlab.com".
+   * The host of the target that this matches on, e.g. `gitlab.com`.
    */
   host: string;
 
   /**
    * The base URL of the API of this provider, e.g.
-   * "https://gitlab.com/api/v4", with no trailing slash.
+   * `https://gitlab.com/api/v4`, with no trailing slash.
    *
    * May be omitted specifically for public GitLab; then it will be deduced.
    */
@@ -48,10 +48,10 @@ export type GitLabIntegrationConfig = {
   token?: string;
 
   /**
-   * The baseUrl of this provider, e.g. "https://gitlab.com", which is passed
+   * The baseUrl of this provider, e.g. `https://gitlab.com`, which is passed
    * into the GitLab client.
    *
-   * If no baseUrl is provided, it will default to https://${host}
+   * If no baseUrl is provided, it will default to `https://${host}`
    */
   baseUrl: string;
 };
@@ -82,11 +82,7 @@ export function readGitLabIntegrationConfig(
     baseUrl = `https://${host}`;
   }
 
-  if (host.includes(':')) {
-    throw new Error(
-      `Invalid GitLab integration config, host '${host}' should just be the host name (e.g. "github.com"), not a URL`,
-    );
-  } else if (!isValidHost(host)) {
+  if (!isValidHost(host)) {
     throw new Error(
       `Invalid GitLab integration config, '${host}' is not a valid host`,
     );

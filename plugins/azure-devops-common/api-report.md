@@ -14,6 +14,29 @@ export enum BuildResult {
   Succeeded = 2,
 }
 
+// Warning: (ae-missing-release-tag) "BuildRun" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+//
+// @public (undocumented)
+export type BuildRun = {
+  id?: number;
+  title: string;
+  link?: string;
+  status?: BuildStatus;
+  result?: BuildResult;
+  queueTime?: string;
+  startTime?: string;
+  finishTime?: string;
+  source: string;
+  uniqueName?: string;
+};
+
+// Warning: (ae-missing-release-tag) "BuildRunOptions" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+//
+// @public (undocumented)
+export type BuildRunOptions = {
+  top?: number;
+};
+
 // Warning: (ae-missing-release-tag) "BuildStatus" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
 // @public (undocumented)
@@ -37,6 +60,10 @@ export interface CreatedBy {
   id?: string;
   // (undocumented)
   imageUrl?: string;
+  // (undocumented)
+  teamIds?: string[];
+  // (undocumented)
+  teamNames?: string[];
   // (undocumented)
   uniqueName?: string;
 }
@@ -231,6 +258,8 @@ export interface Reviewer {
   // (undocumented)
   isRequired?: boolean;
   // (undocumented)
+  uniqueName?: string;
+  // (undocumented)
   voteStatus: PullRequestVoteStatus;
 }
 
@@ -241,9 +270,27 @@ export interface Team {
   // (undocumented)
   id?: string;
   // (undocumented)
-  memberIds?: string[];
+  members?: string[];
   // (undocumented)
   name?: string;
+  // (undocumented)
+  projectId?: string;
+  // (undocumented)
+  projectName?: string;
+}
+
+// Warning: (ae-missing-release-tag) "TeamMember" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+//
+// @public (undocumented)
+export interface TeamMember {
+  // (undocumented)
+  displayName?: string;
+  // (undocumented)
+  id?: string;
+  // (undocumented)
+  memberOf?: string[];
+  // (undocumented)
+  uniqueName?: string;
 }
 
 // (No @packageDocumentation comment for this package)

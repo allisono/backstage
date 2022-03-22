@@ -59,11 +59,7 @@ describe('MemberTab Test', () => {
             relations: [
               {
                 type: 'memberOf',
-                target: {
-                  kind: 'group',
-                  name: 'team-d',
-                  namespace: 'default',
-                },
+                targetRef: 'group:default/team-d',
               },
             ],
             spec: {
@@ -73,33 +69,6 @@ describe('MemberTab Test', () => {
                 picture: 'https://example.com/staff/tara.jpeg',
               },
               memberOf: ['team-d'],
-            },
-          },
-          {
-            apiVersion: 'backstage.io/v1alpha1',
-            kind: 'User',
-            metadata: {
-              name: 'sara.macgovern',
-              namespace: 'default',
-              uid: 'a5gerth57',
-            },
-            relations: [
-              {
-                type: 'memberOf',
-                target: {
-                  kind: 'group',
-                  name: 'team-d',
-                  namespace: 'foo-bar',
-                },
-              },
-            ],
-            spec: {
-              profile: {
-                displayName: 'Sara MacGovern',
-                email: 'sara-macgovern@example.com',
-                picture: 'https://example.com/staff/sara.jpeg',
-              },
-              memberOf: ['foo-bar/team-d'],
             },
           },
         ] as Entity[],
@@ -131,5 +100,19 @@ describe('MemberTab Test', () => {
     );
 
     expect(rendered.getByText('Members (1)')).toBeInTheDocument();
+  });
+
+  it('Can render different member display title', async () => {
+    const rendered = await renderWithEffects(
+      wrapInTestApp(
+        <TestApiProvider apis={[[catalogApiRef, catalogApi]]}>
+          <EntityProvider entity={groupEntity}>
+            <MembersListCard memberDisplayTitle="Testers" />
+          </EntityProvider>
+        </TestApiProvider>,
+      ),
+    );
+
+    expect(rendered.getByText('Testers (1)')).toBeInTheDocument();
   });
 });

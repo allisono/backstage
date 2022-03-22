@@ -75,7 +75,9 @@ class PackageJsonHandler {
     await this.syncScripts();
     await this.syncPublishConfig();
     await this.syncDependencies('dependencies');
+    await this.syncDependencies('peerDependencies', true);
     await this.syncDependencies('devDependencies');
+    await this.syncReactDeps();
   }
 
   // Make sure a field inside package.json is in sync. This mutates the targetObj and writes package.json on change.
@@ -171,6 +173,14 @@ class PackageJsonHandler {
       return;
     }
 
+    // Skip diffing package scripts that have been migrated to the new commands
+    const hasNewScript = Object.values(targetScripts).some(script =>
+      String(script).includes('backstage-cli package '),
+    );
+    if (hasNewScript) {
+      return;
+    }
+
     for (const key of Object.keys(pkgScripts)) {
       await this.syncField(key, pkgScripts, targetScripts, 'scripts');
     }
@@ -207,12 +217,12 @@ class PackageJsonHandler {
     }
   }
 
-  private async syncDependencies(fieldName: string) {
+  private async syncDependencies(fieldName: string, required: boolean = false) {
     const pkgDeps = this.pkg[fieldName];
     const targetDeps = (this.targetPkg[fieldName] =
       this.targetPkg[fieldName] || {});
 
-    if (!pkgDeps) {
+    if (!pkgDeps && !required) {
       return;
     }
 
@@ -231,8 +241,24 @@ class PackageJsonHandler {
         continue;
       }
 
-      await this.syncField(key, pkgDeps, targetDeps, fieldName, true, true);
+      await this.syncField(
+        key,
+        pkgDeps,
+        targetDeps,
+        fieldName,
+        true,
+        !required,
+      );
     }
+  }
+
+  private async syncReactDeps() {
+    const targetDeps = (this.targetPkg.dependencies =
+      this.targetPkg.dependencies || {});
+
+    // Remove these from from deps since they're now in peerDeps
+    await this.syncField('react', {}, targetDeps, 'dependencies');
+    await this.syncField('react-dom', {}, targetDeps, 'dependencies');
   }
 
   private async write() {

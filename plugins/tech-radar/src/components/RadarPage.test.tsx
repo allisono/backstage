@@ -22,9 +22,8 @@ import {
 } from '@backstage/test-utils';
 import { lightTheme } from '@backstage/theme';
 import { ThemeProvider } from '@material-ui/core';
-import { render, waitForElement } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 import GetBBoxPolyfill from '../utils/polyfills/getBBox';
 import { RadarPage } from './RadarPage';
 import { TechRadarLoaderResponse, techRadarApiRef, TechRadarApi } from '../api';
@@ -75,7 +74,7 @@ describe('RadarPage', () => {
     });
     expect(getByTestId('progress')).toBeInTheDocument();
 
-    await waitForElement(() => queryByTestId('tech-radar-svg'));
+    await waitFor(() => queryByTestId('tech-radar-svg'));
     jest.useRealTimers();
   });
 
@@ -95,7 +94,7 @@ describe('RadarPage', () => {
       </ThemeProvider>,
     );
 
-    await waitForElement(() => getByTestId('tech-radar-svg'));
+    await waitFor(() => getByTestId('tech-radar-svg'));
 
     expect(
       getByText('Pick the recommended technologies for your projects'),
@@ -121,7 +120,7 @@ describe('RadarPage', () => {
       </ThemeProvider>,
     );
 
-    await waitForElement(() => getByTestId('tech-radar-svg'));
+    await waitFor(() => getByTestId('tech-radar-svg'));
 
     expect(getByTestId('tech-radar-svg')).toBeInTheDocument();
     expect(mockClient.load).toBeCalledWith('myId');
@@ -153,7 +152,7 @@ describe('RadarPage', () => {
       </ThemeProvider>,
     );
 
-    await waitForElement(() => !queryByTestId('progress'));
+    await waitFor(() => !queryByTestId('progress'));
 
     expect(errorApi.getErrors()).toEqual([
       { error: new Error('404 Page Not Found'), context: undefined },

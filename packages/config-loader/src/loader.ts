@@ -29,8 +29,10 @@ import {
 } from './lib';
 import fetch from 'node-fetch';
 
+/** @public */
 export type ConfigTarget = { path: string } | { url: string };
 
+/** @public */
 export type LoadConfigOptionsWatch = {
   /**
    * A listener that is called when a config file is changed.
@@ -43,9 +45,10 @@ export type LoadConfigOptionsWatch = {
   stopSignal?: Promise<void>;
 };
 
+/** @public */
 export type LoadConfigOptionsRemote = {
   /**
-   * An optional remote config reloading period, in seconds
+   * A remote config reloading period, in seconds
    */
   reloadIntervalSeconds: number;
 };
@@ -59,16 +62,8 @@ export type LoadConfigOptions = {
   // The root directory of the config loading context. Used to find default configs.
   configRoot: string;
 
-  /** Absolute paths to load config files from. Configs from earlier paths have lower priority.
-   * @deprecated Use {@link configTargets} instead.
-   */
-  configPaths: string[];
-
   // Paths to load config files from. Configs from earlier paths have lower priority.
   configTargets: ConfigTarget[];
-
-  /** @deprecated This option has been removed */
-  env?: string;
 
   /**
    * Custom environment variable loading function
@@ -114,20 +109,21 @@ export async function loadConfig(
     .filter((e): e is { path: string } => e.hasOwnProperty('path'))
     .map(configTarget => configTarget.path);
 
-  // Append deprecated configPaths to the absolute config paths received via configTargets.
-  options.configPaths.forEach(cp => {
-    if (!configPaths.includes(cp)) {
-      configPaths.push(cp);
-    }
-  });
-
   const configUrls: string[] = options.configTargets
     .slice()
     .filter((e): e is { url: string } => e.hasOwnProperty('url'))
     .map(configTarget => configTarget.url);
 
-  if (remote === undefined && configUrls.length > 0) {
-    throw new Error(`Remote config detected but this feature is turned off`);
+  if (remote === undefined) {
+    if (configUrls.length > 0) {
+      throw new Error(
+        `Please make sure you are passing the remote option when loading remote configurations. See https://backstage.io/docs/conf/writing#configuration-files for detailed info.`,
+      );
+    }
+  } else if (remote.reloadIntervalSeconds <= 0) {
+    throw new Error(
+      `Remote config must be contain a non zero reloadIntervalSeconds: <seconds> value`,
+    );
   }
 
   // If no paths are provided, we default to reading
@@ -144,7 +140,8 @@ export async function loadConfig(
   const env = envFunc ?? (async (name: string) => process.env[name]);
 
   const loadConfigFiles = async () => {
-    const configs = [];
+    const fileConfigs = [];
+    const loadedPaths = new Set<string>();
 
     for (const configPath of configPaths) {
       if (!isAbsolute(configPath)) {
@@ -152,8 +149,15 @@ export async function loadConfig(
       }
 
       const dir = dirname(configPath);
-      const readFile = (path: string) =>
-        fs.readFile(resolvePath(dir, path), 'utf8');
+      const readFile = (path: string) => {
+        const fullPath = resolvePath(dir, path);
+        // if we read a file when building configuration,
+        // we should include that file when watching for
+        // changes, too.
+        loadedPaths.add(fullPath);
+
+        return fs.readFile(fullPath, 'utf8');
+      };
 
       const input = yaml.parse(await readFile(configPath));
       const substitutionTransform = createSubstitutionTransform(env);
@@ -162,10 +166,10 @@ export async function loadConfig(
         substitutionTransform,
       ]);
 
-      configs.push({ data, context: basename(configPath) });
+      fileConfigs.push({ data, context: basename(configPath) });
     }
 
-    return configs;
+    return { fileConfigs, loadedPaths };
   };
 
   const loadRemoteConfigFiles = async () => {
@@ -203,8 +207,9 @@ export async function loadConfig(
   };
 
   let fileConfigs: AppConfig[];
+  let loadedPaths: Set<string>;
   try {
-    fileConfigs = await loadConfigFiles();
+    ({ fileConfigs, loadedPaths } = await loadConfigFiles());
   } catch (error) {
     throw new ForwardedError('Failed to read static configuration file', error);
   }
@@ -221,17 +226,27 @@ export async function loadConfig(
     }
   }
 
-  const envConfigs = await readEnvConfig(process.env);
+  const envConfigs = readEnvConfig(process.env);
 
   const watchConfigFile = (watchProp: LoadConfigOptionsWatch) => {
-    const watcher = chokidar.watch(configPaths, {
+    let watchedFiles = Array.from(loadedPaths);
+
+    const watcher = chokidar.watch(watchedFiles, {
       usePolling: process.env.NODE_ENV === 'test',
     });
 
     let currentSerializedConfig = JSON.stringify(fileConfigs);
     watcher.on('change', async () => {
       try {
-        const newConfigs = await loadConfigFiles();
+        const { fileConfigs: newConfigs, loadedPaths: newLoadedPaths } =
+          await loadConfigFiles();
+
+        // Replace watches to handle any added or removed
+        // $include or $file expressions.
+        watcher.unwatch(watchedFiles);
+        watchedFiles = Array.from(newLoadedPaths);
+        watcher.add(watchedFiles);
+
         const newSerializedConfig = JSON.stringify(newConfigs);
 
         if (currentSerializedConfig === newSerializedConfig) {

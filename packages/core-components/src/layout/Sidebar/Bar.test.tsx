@@ -14,30 +14,43 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { renderInTestApp } from '@backstage/test-utils';
+import AcUnitIcon from '@material-ui/icons/AcUnit';
+import CreateComponentIcon from '@material-ui/icons/AddCircleOutline';
+import BuildRoundedIcon from '@material-ui/icons/BuildRounded';
+import MenuBookIcon from '@material-ui/icons/MenuBook';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import BuildRoundedIcon from '@material-ui/icons/BuildRounded';
-import CreateComponentIcon from '@material-ui/icons/AddCircleOutline';
-import MenuBookIcon from '@material-ui/icons/MenuBook';
-import AcUnitIcon from '@material-ui/icons/AcUnit';
-import { Sidebar, SidebarExpandButton } from './Bar';
-import { SidebarItem, SidebarSearchField } from './Items';
-import { SidebarSubmenuItem } from './SidebarSubmenuItem';
-import { SidebarSubmenu } from './SidebarSubmenu';
-import { SidebarPinStateContext } from '.';
+import React from 'react';
+import {
+  Sidebar,
+  SidebarExpandButton,
+  SidebarItem,
+  SidebarSearchField,
+  SidebarPinStateContext,
+  SidebarSubmenu,
+  SidebarSubmenuItem,
+} from '.';
 
 async function renderScalableSidebar() {
   await renderInTestApp(
     <SidebarPinStateContext.Provider
-      value={{ isPinned: false, toggleSidebarPinState: () => {} }}
+      value={{
+        isPinned: false,
+        isMobile: false,
+        toggleSidebarPinState: () => {},
+      }}
     >
       <Sidebar disableExpandOnHover>
         <SidebarSearchField onSearch={() => {}} to="/search" />
         <SidebarItem icon={MenuBookIcon} onClick={() => {}} text="Catalog">
           <SidebarSubmenu title="Catalog">
             <SidebarSubmenuItem title="Tools" to="/1" icon={BuildRoundedIcon} />
+            <SidebarSubmenuItem
+              title="External Link"
+              to="https://backstage.io/"
+              icon={BuildRoundedIcon}
+            />
             <SidebarSubmenuItem
               title="Misc"
               to="/6"
@@ -50,6 +63,10 @@ async function renderScalableSidebar() {
                 {
                   title: 'dropdown item 2',
                   to: '/dropdownitemlink2',
+                },
+                {
+                  title: 'dropdown item 3',
+                  to: 'https://backstage.io/',
                 },
               ]}
             />
@@ -102,6 +119,23 @@ describe('Sidebar', () => {
       expect(screen.getByText('dropdown item 1').closest('a')).toHaveAttribute(
         'href',
         '/dropdownitemlink',
+      );
+    });
+
+    it('Submenu item renders an external link when `to` value is provided', async () => {
+      userEvent.hover(screen.getByTestId('item-with-submenu'));
+      expect(screen.getByText('External Link').closest('a')).toHaveAttribute(
+        'href',
+        'https://backstage.io/',
+      );
+    });
+
+    it('Dropdown item in submenu renders an external link when `to` value is provided', async () => {
+      userEvent.hover(screen.getByTestId('item-with-submenu'));
+      userEvent.click(screen.getByText('Misc'));
+      expect(screen.getByText('dropdown item 3').closest('a')).toHaveAttribute(
+        'href',
+        'https://backstage.io/',
       );
     });
   });

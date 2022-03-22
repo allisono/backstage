@@ -1,5 +1,214 @@
 # @backstage/core-app-api
 
+## 1.0.1-next.0
+
+### Patch Changes
+
+- a7bb762dab: fixed empty body issue for POST requests using FetchAPI with 'plugin://' prefix
+- c47509e1a0: Implemented changes suggested by Deepsource.io including multiple double non-null assertion operators and unexpected awaits for non-promise values.
+
+## 1.0.0
+
+### Major Changes
+
+- b58c70c223: This package has been promoted to v1.0! To understand how this change affects the package, please check out our [versioning policy](https://backstage.io/docs/overview/versioning-policy).
+
+### Patch Changes
+
+- a422d7ce5e: chore(deps): bump `@testing-library/react` from 11.2.6 to 12.1.3
+- f24ef7864e: Minor typo fixes
+- Updated dependencies
+  - @backstage/core-plugin-api@1.0.0
+  - @backstage/version-bridge@1.0.0
+  - @backstage/config@1.0.0
+  - @backstage/types@1.0.0
+
+## 0.6.0
+
+### Minor Changes
+
+- bb2bb36651: **BREAKING**: Removed the deprecated `get` method from `StorageAPI` and its implementations, this method has been replaced by the `snapshot` method. The return value from snapshot no longer includes `newValue` which has been replaced by `value`. For getting notified when a value changes, use `observe# @backstage/core-app-api.
+- f3cce3dcf7: **BREAKING**: Removed export of `GithubSession` and `SamlSession` which are only used internally.
+- af5eaa87f4: **BREAKING**: Removed deprecated `auth0AuthApiRef`, `oauth2ApiRef`, `samlAuthApiRef` and `oidcAuthApiRef` as these APIs are too generic to be useful. Instructions for how to migrate can be found at [https://backstage.io/docs/api/deprecations#generic-auth-api-refs](https://backstage.io/docs/api/deprecations#generic-auth-api-refs).
+- dbf84eee55: **BREAKING**: Removed the deprecated `GithubAuth.normalizeScopes` method.
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-plugin-api@0.8.0
+
+## 0.5.4
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-plugin-api@0.7.0
+
+## 0.5.3
+
+### Patch Changes
+
+- 1ed305728b: Bump `node-fetch` to version 2.6.7 and `cross-fetch` to version 3.1.5
+- c77c5c7eb6: Added `backstage.role` to `package.json`
+- Updated dependencies
+  - @backstage/core-plugin-api@0.6.1
+  - @backstage/config@0.1.14
+  - @backstage/types@0.1.2
+  - @backstage/version-bridge@0.1.2
+
+## 0.5.2
+
+### Patch Changes
+
+- 40775bd263: Switched out the `GithubAuth` implementation to use the common `OAuth2` implementation. This relies on the simultaneous change in `@backstage/plugin-auth-backend` that enabled access token storage in cookies rather than the current solution that's based on `LocalStorage`.
+
+  > **NOTE:** Make sure you upgrade the `auth-backend` deployment before or at the same time as you deploy this change.
+
+## 0.5.2-next.0
+
+### Patch Changes
+
+- 40775bd263: Switched out the `GithubAuth` implementation to use the common `OAuth2` implementation. This relies on the simultaneous change in `@backstage/plugin-auth-backend` that enabled access token storage in cookies rather than the current solution that's based on `LocalStorage`.
+
+  > **NOTE:** Make sure you upgrade the `auth-backend` deployment before or at the same time as you deploy this change.
+
+## 0.5.1
+
+### Patch Changes
+
+- f959c22787: Asynchronous methods on the identity API can now reliably be called at any time, including early in the bootstrap process or prior to successful sign-in.
+
+  Previously in such situations, a `Tried to access IdentityApi before app was loaded` error would be thrown. Now, those methods will wait and resolve eventually (as soon as a concrete identity API is provided).
+
+## 0.5.0
+
+### Minor Changes
+
+- ceebe25391: Removed deprecated `SignInResult` type, which was replaced with the new `onSignInSuccess` callback.
+
+### Patch Changes
+
+- fb565073ec: Add an `allowUrl` callback option to `FetchMiddlewares.injectIdentityAuth`
+- f050eec2c0: Added validation during the application startup that detects if there are any plugins present that have not had their required external routes bound. Failing the validation will cause a hard crash as it is a programmer error. It lets you detect early on that there are dangling routes, rather than having them cause an error later on.
+- Updated dependencies
+  - @backstage/core-plugin-api@0.6.0
+  - @backstage/config@0.1.13
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- ceebe25391: Removed deprecated `SignInResult` type, which was replaced with the new `onSignInSuccess` callback.
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-plugin-api@0.6.0-next.0
+  - @backstage/config@0.1.13-next.0
+
+## 0.4.0
+
+### Minor Changes
+
+- e2eb92c109: Removed previously deprecated `ApiRegistry` export.
+
+### Patch Changes
+
+- 34442cd5cf: Fixed an issue where valid SAML and GitHub sessions would be considered invalid and not be stored.
+
+  Deprecated the `SamlSession` and `GithubSession` types.
+
+- 784d8078ab: Removed direct and transitive MUI dependencies.
+- Updated dependencies
+  - @backstage/config@0.1.12
+  - @backstage/core-plugin-api@0.5.0
+
+## 0.3.1
+
+### Patch Changes
+
+- 4ce51ab0f1: Internal refactor of the `react-use` imports to use `react-use/lib/*` instead.
+- Updated dependencies
+  - @backstage/core-plugin-api@0.4.1
+  - @backstage/core-components@0.8.3
+
+## 0.3.0
+
+### Minor Changes
+
+- a195284c7b: Updated `WebStorageApi` to reflect the `StorageApi` changes in `@backstage/core-plugin-api`.
+- b3605da81c: - Removed deprecated definition `createApp` from `@backstage/core-app-api` which has been replaced by `@backstage/app-defaults#createApp`
+  - Removed deprecated type `BackstagePluginWithAnyOutput`
+  - Removed deprecated constructors for `GithubAuth`, `OAuth2`, and `SamlAuth` as the `create` method should be used instead
+- 68f8b10ccd: - Removed deprecation configuration option `theme` from `AppTheme` of the `AppThemeApi`
+  - Removed reference to `theme` in the `app-defaults` default `AppTheme`
+  - Removed logic in `AppThemeProvider` that creates `ThemeProvider` from `appTheme.theme`
+
+### Patch Changes
+
+- 7927005152: Add `FetchApi` and related `fetchApiRef` which implement fetch, with an added Backstage token header when available.
+- 518ddc00bc: Schema-validate local storage cached session info on load
+- Updated dependencies
+  - @backstage/app-defaults@0.1.3
+  - @backstage/core-plugin-api@0.4.0
+  - @backstage/core-components@0.8.2
+
+## 0.2.1
+
+### Patch Changes
+
+- c11ce4f552: Deprecated `Auth0Auth`, pointing to using `OAuth2` directly instead.
+- 9d6503e86c: Switched out usage of deprecated `OAuthRequestApi` types from `@backstage/core-plugin-api`.
+- Updated dependencies
+  - @backstage/core-plugin-api@0.3.1
+  - @backstage/core-components@0.8.1
+
+## 0.2.0
+
+### Minor Changes
+
+- a036b65c2f: **BREAKING CHANGE**
+
+  The app `SignInPage` component has been updated to switch out the `onResult` callback for a new `onSignInSuccess` callback. This is an immediate breaking change without any deprecation period, as it was deemed to be the way of making this change that had the lowest impact.
+
+  The new `onSignInSuccess` callback directly accepts an implementation of an `IdentityApi`, rather than a `SignInResult`. The `SignInPage` from `@backstage/core-component` has been updated to fit this new API, and as long as you pass on `props` directly you should not see any breakage.
+
+  However, if you implement your own custom `SignInPage`, then this will be a breaking change and you need to migrate over to using the new callback. While doing so you can take advantage of the `UserIdentity.fromLegacy` helper from `@backstage/core-components` to make the migration simpler by still using the `SignInResult` type. This helper is also deprecated though and is only provided for immediate migration. Long-term it will be necessary to build the `IdentityApi` using for example `UserIdentity.create` instead.
+
+  The following is an example of how you can migrate existing usage immediately using `UserIdentity.fromLegacy`:
+
+  ```ts
+  onResult(signInResult);
+  // becomes
+  onSignInSuccess(UserIdentity.fromLegacy(signInResult));
+  ```
+
+  The following is an example of how implement the new `onSignInSuccess` callback of the `SignInPage` using `UserIdentity.create`:
+
+  ```ts
+  const identityResponse = await authApi.getBackstageIdentity();
+  // Profile is optional and will be removed, but allows the
+  // synchronous getProfile method of the IdentityApi to be used.
+  const profile = await authApi.getProfile();
+  onSignInSuccess(
+    UserIdentity.create({
+      identity: identityResponse.identity,
+      authApi,
+      profile,
+    }),
+  );
+  ```
+
+### Patch Changes
+
+- cd450844f6: Moved React dependencies to `peerDependencies` and allow both React v16 and v17 to be used.
+- dcd1a0c3f4: Minor improvement to the API reports, by not unpacking arguments directly
+- Updated dependencies
+  - @backstage/core-components@0.8.0
+  - @backstage/core-plugin-api@0.3.0
+  - @backstage/app-defaults@0.1.2
+  - @backstage/version-bridge@0.1.1
+
 ## 0.1.24
 
 ### Patch Changes

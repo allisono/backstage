@@ -14,71 +14,74 @@
  * limitations under the License.
  */
 import React, { useContext, useState } from 'react';
-import {
-  NavLink,
-  resolvePath,
-  useLocation,
-  useResolvedPath,
-} from 'react-router-dom';
+import { resolvePath, useLocation, useResolvedPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
+import { Link } from '../../components/Link';
 import { IconComponent } from '@backstage/core-plugin-api';
-import clsx from 'clsx';
+import classnames from 'classnames';
 import { BackstageTheme } from '@backstage/theme';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import { SidebarItemWithSubmenuContext } from './config';
+import { isLocationMatch } from './utils';
 
-const useStyles = makeStyles<BackstageTheme>(theme => ({
-  item: {
-    height: 48,
-    width: '100%',
-    '&:hover': {
-      background: '#6f6f6f',
-      color: theme.palette.navigation.selectedColor,
+const useStyles = makeStyles<BackstageTheme>(
+  theme => ({
+    item: {
+      height: 48,
+      width: '100%',
+      '&:hover': {
+        background: '#6f6f6f',
+        color: theme.palette.navigation.selectedColor,
+      },
+      display: 'flex',
+      alignItems: 'center',
+      color: theme.palette.navigation.color,
+      padding: 20,
+      cursor: 'pointer',
+      position: 'relative',
+      background: 'none',
+      border: 'none',
     },
-    display: 'flex',
-    alignItems: 'center',
-    color: theme.palette.navigation.color,
-    padding: 20,
-    cursor: 'pointer',
-    position: 'relative',
-    background: 'none',
-    border: 'none',
-  },
-  itemContainer: {
-    width: '100%',
-  },
-  selected: {
-    background: '#6f6f6f',
-    color: '#FFF',
-  },
-  label: {
-    margin: 14,
-    marginLeft: 7,
-    fontSize: 14,
-  },
-  dropdownArrow: {
-    position: 'absolute',
-    right: 21,
-  },
-  dropdown: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'end',
-  },
-  dropdownItem: {
-    width: '100%',
-    padding: '10px 0 10px 0',
-  },
-  textContent: {
-    color: theme.palette.navigation.color,
-    display: 'flex',
-    justifyContent: 'center',
-    fontSize: '14px',
-  },
-}));
+    itemContainer: {
+      width: '100%',
+    },
+    selected: {
+      background: '#6f6f6f',
+      color: '#FFF',
+    },
+    label: {
+      margin: 14,
+      marginLeft: 7,
+      fontSize: 14,
+    },
+    dropdownArrow: {
+      position: 'absolute',
+      right: 21,
+    },
+    dropdown: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'end',
+    },
+    dropdownItem: {
+      width: '100%',
+      padding: '10px 0 10px 0',
+    },
+    textContent: {
+      color: theme.palette.navigation.color,
+      display: 'flex',
+      justifyContent: 'center',
+      [theme.breakpoints.down('xs')]: {
+        display: 'block',
+        paddingLeft: theme.spacing(4),
+      },
+      fontSize: '14px',
+    },
+  }),
+  { name: 'BackstageSidebarSubmenuItem' },
+);
 
 /**
  * Clickable item displayed when submenu item is clicked.
@@ -116,14 +119,13 @@ export type SidebarSubmenuItemProps = {
 export const SidebarSubmenuItem = (props: SidebarSubmenuItemProps) => {
   const { title, to, icon: Icon, dropdownItems } = props;
   const classes = useStyles();
-  const { pathname: locationPathname } = useLocation();
-  const { pathname: toPathname } = useResolvedPath(to);
   const { setIsHoveredOn } = useContext(SidebarItemWithSubmenuContext);
   const closeSubmenu = () => {
     setIsHoveredOn(false);
   };
-
-  let isActive = locationPathname === toPathname;
+  const toLocation = useResolvedPath(to);
+  const currentLocation = useLocation();
+  let isActive = isLocationMatch(currentLocation, toLocation);
 
   const [showDropDown, setShowDropDown] = useState(false);
   const handleClickDropdown = () => {
@@ -132,13 +134,15 @@ export const SidebarSubmenuItem = (props: SidebarSubmenuItemProps) => {
   if (dropdownItems !== undefined) {
     dropdownItems.some(item => {
       const resolvedPath = resolvePath(item.to);
-      isActive = locationPathname === resolvedPath.pathname;
+      isActive = isLocationMatch(currentLocation, resolvedPath);
+      return isActive;
     });
     return (
       <div className={classes.itemContainer}>
         <button
           onClick={handleClickDropdown}
-          className={clsx(
+          onTouchStart={e => e.stopPropagation()}
+          className={classnames(
             classes.item,
             isActive ? classes.selected : undefined,
           )}
@@ -157,11 +161,11 @@ export const SidebarSubmenuItem = (props: SidebarSubmenuItemProps) => {
           <div className={classes.dropdown}>
             {dropdownItems.map((object, key) => (
               <Link
-                component={NavLink}
                 to={object.to}
                 underline="none"
                 className={classes.dropdownItem}
                 onClick={closeSubmenu}
+                onTouchStart={e => e.stopPropagation()}
                 key={key}
               >
                 <Typography className={classes.textContent}>
@@ -178,11 +182,14 @@ export const SidebarSubmenuItem = (props: SidebarSubmenuItemProps) => {
   return (
     <div className={classes.itemContainer}>
       <Link
-        component={NavLink}
         to={to}
         underline="none"
-        className={clsx(classes.item, isActive ? classes.selected : undefined)}
+        className={classnames(
+          classes.item,
+          isActive ? classes.selected : undefined,
+        )}
         onClick={closeSubmenu}
+        onTouchStart={e => e.stopPropagation()}
       >
         <Icon fontSize="small" />
         <Typography variant="subtitle1" className={classes.label}>

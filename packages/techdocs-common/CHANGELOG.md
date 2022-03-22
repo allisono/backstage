@@ -1,5 +1,193 @@
 # @backstage/techdocs-common
 
+## 0.11.14-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-techdocs-node@1.0.1-next.0
+
+## 0.11.13
+
+### Patch Changes
+
+- 82b0190155: This package is no longer maintained. Use `@backstage/plugin-techdocs-node`, going forward.
+- Updated dependencies
+  - @backstage/plugin-techdocs-node@1.0.0
+
+## 0.11.12
+
+### Patch Changes
+
+- cea6f10b97: **DEPRECATION**
+
+  The `@backstage/techdocs-common` package is being renamed `@backstage/plugin-techdocs-node`. We may continue to publish changes to `@backstage/techdocs-common` for a time, but will stop doing so in the near future. If you depend on this package, you should update your dependencies to point at the renamed package.
+
+- Updated dependencies
+  - @backstage/plugin-techdocs-node@0.11.12
+
+## 0.11.12-next.0
+
+### Patch Changes
+
+- cea6f10b97: **DEPRECATION**
+
+  The `@backstage/techdocs-common` package is being renamed `@backstage/plugin-techdocs-node`. We may continue to publish changes to `@backstage/techdocs-common` for a time, but will stop doing so in the near future. If you depend on this package, you should update your dependencies to point at the renamed package.
+
+- Updated dependencies
+  - @backstage/plugin-techdocs-node@0.11.12-next.0
+
+## 0.11.11
+
+### Patch Changes
+
+- 955be6bc7d: adds passing projectID to the Storage client
+- ff0a16fb1a: Modify techdocs builder to automatically append techdocs-core plugin to mkdocs.yaml file if it is missing. Adds an optional configuration item if this plugin needs to be omitted.
+- Updated dependencies
+  - @backstage/catalog-model@0.12.0
+  - @backstage/backend-common@0.12.0
+  - @backstage/integration@0.8.0
+  - @backstage/search-common@0.3.0
+
+## 0.11.10
+
+### Patch Changes
+
+- 209fd128e6: Updated usage of `github:` location types in docs to use `url:` instead.
+- 13ef228d03: Clean up the API interface for TechDocs common library.
+- Updated dependencies
+  - @backstage/backend-common@0.11.0
+  - @backstage/catalog-model@0.11.0
+  - @backstage/integration@0.7.5
+
+## 0.11.9
+
+### Patch Changes
+
+- Fix for the previous release with missing type declarations.
+- Updated dependencies
+  - @backstage/backend-common@0.10.9
+  - @backstage/catalog-model@0.10.1
+  - @backstage/config@0.1.15
+  - @backstage/errors@0.2.2
+  - @backstage/integration@0.7.4
+  - @backstage/search-common@0.2.4
+
+## 0.11.8
+
+### Patch Changes
+
+- c77c5c7eb6: Added `backstage.role` to `package.json`
+- 216725b434: Updated to use new names for `parseLocationRef` and `stringifyLocationRef`
+- 7aeb491394: Replace use of deprecated `ENTITY_DEFAULT_NAMESPACE` constant with `DEFAULT_NAMESPACE`.
+- Updated dependencies
+  - @backstage/backend-common@0.10.8
+  - @backstage/errors@0.2.1
+  - @backstage/integration@0.7.3
+  - @backstage/catalog-model@0.10.0
+  - @backstage/config@0.1.14
+  - @backstage/search-common@0.2.3
+
+## 0.11.7
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.10.7
+
+## 0.11.7-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.10.7-next.0
+
+## 0.11.6
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.10.6
+
+## 0.11.6-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.10.6-next.0
+
+## 0.11.5
+
+### Patch Changes
+
+- ff93fbeeec: Fix interpolated string for "Failed to generate docs from ..."
+- Updated dependencies
+  - @backstage/search-common@0.2.2
+  - @backstage/backend-common@0.10.5
+
+## 0.11.4
+
+### Patch Changes
+
+- 47277c0d8c: Updated the default version of the `@spotify/techdocs` container used when `techdocs.generator.runIn` is `docker` to `v0.3.6`, which includes an update to `mkdocs-monorepo-plugin` that allows glob-based wildcard includes.
+- Updated dependencies
+  - @backstage/integration@0.7.2
+  - @backstage/backend-common@0.10.4
+  - @backstage/config@0.1.13
+  - @backstage/catalog-model@0.9.10
+
+## 0.11.4-next.0
+
+### Patch Changes
+
+- 47277c0d8c: Updated the default version of the `@spotify/techdocs` container used when `techdocs.generator.runIn` is `docker` to `v0.3.6`, which includes an update to `mkdocs-monorepo-plugin` that allows glob-based wildcard includes.
+- Updated dependencies
+  - @backstage/backend-common@0.10.4-next.0
+  - @backstage/config@0.1.13-next.0
+  - @backstage/catalog-model@0.9.10-next.0
+  - @backstage/integration@0.7.2-next.0
+
+## 0.11.3
+
+### Patch Changes
+
+- 5333451def: Cleaned up API exports
+- Updated dependencies
+  - @backstage/config@0.1.12
+  - @backstage/integration@0.7.1
+  - @backstage/backend-common@0.10.3
+  - @backstage/errors@0.2.0
+  - @backstage/catalog-model@0.9.9
+
+## 0.11.2
+
+### Patch Changes
+
+- c2c8768771: Bump `@azure/identity` from `^1.5.0` to `^2.0.1`.
+- Updated dependencies
+  - @backstage/backend-common@0.10.1
+  - @backstage/integration@0.7.0
+
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.10.0
+
+## 0.11.0
+
+### Minor Changes
+
+- 1bada775a9: Added the ability for the TechDocs Backend to (optionally) leverage a cache
+  store to improve performance when reading files from a cloud storage provider.
+
+### Patch Changes
+
+- dcd1a0c3f4: Minor improvement to the API reports, by not unpacking arguments directly
+- Updated dependencies
+  - @backstage/backend-common@0.9.13
+
 ## 0.10.8
 
 ### Patch Changes

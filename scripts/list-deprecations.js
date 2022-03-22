@@ -57,9 +57,7 @@ class ReleaseProvider {
       );
 
       // Filter out just the releases
-      const releases = tagOutput
-        .split('\n')
-        .filter(l => l.startsWith('release-'));
+      const releases = tagOutput.split('\n').filter(l => l.startsWith('v'));
 
       // Then find the earliest release that affected our package
       for (const release of releases) {
@@ -129,7 +127,7 @@ async function main() {
           const srcDir = resolvePath(rootPath, packageDir, 'src');
 
           if (await fs.pathExists(srcDir)) {
-            const files = await globby(['**/*.{js,jsx,ts,tsx}'], {
+            const files = await globby(['**/*.{js,jsx,ts,tsx,mjs,cjs}'], {
               cwd: srcDir,
             });
             fileQueue.push(

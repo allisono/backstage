@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import React, {
-  useState,
-  ReactElement,
-  ReactNode,
-  PropsWithChildren,
-} from 'react';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import Divider from '@material-ui/core/Divider';
-import Tabs from '@material-ui/core/Tabs';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Tab, { TabProps } from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
+import React, {
+  PropsWithChildren,
+  ReactElement,
+  ReactNode,
+  useState,
+} from 'react';
 import { BottomLink, BottomLinkProps } from '../BottomLink';
 import { ErrorBoundary, ErrorBoundaryProps } from '../ErrorBoundary';
 
@@ -89,12 +89,15 @@ export function TabbedCard(props: PropsWithChildren<Props>) {
   let selectedTabContent: ReactNode;
   if (!value) {
     React.Children.map(children, (child, index) => {
-      if (index === selectedIndex) selectedTabContent = child?.props.children;
+      if (React.isValidElement(child) && index === selectedIndex) {
+        selectedTabContent = child?.props.children;
+      }
     });
   } else {
     React.Children.map(children, child => {
-      if (child?.props.value === value)
+      if (React.isValidElement(child) && child?.props.value === value) {
         selectedTabContent = child?.props.children;
+      }
     });
   }
 
@@ -149,7 +152,12 @@ type CardTabProps = TabProps & {
   children: ReactNode;
 };
 
-/** @public */
+/**
+ * Card tab component used in {@link TabbedCard}
+ *
+ * @public
+ *
+ */
 export function CardTab(props: PropsWithChildren<CardTabProps>) {
   const { children, ...restProps } = props;
   const classes = useCardTabStyles();

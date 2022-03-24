@@ -1488,6 +1488,25 @@
     yaml "^1.10.0"
     zen-observable "^0.8.15"
 
+"@backstage/plugin-org@^0.5.4-next.0":
+  version "0.5.4-next.0"
+  resolved "https://registry.npmjs.org/@backstage/plugin-org/-/plugin-org-0.5.4-next.0.tgz#dbf000041b3127fd9e952f939783f06682331a25"
+  integrity sha512-o003xzv7tqliYx2IJ29bEIYhJNA18AhhaKxHnTWmoLhuM5TCKvmbuQzP5oEcKYFH9mvVv3j8pWFPoLxkaMAHug==
+  dependencies:
+    "@backstage/catalog-model" "^1.0.1-next.0"
+    "@backstage/core-components" "^0.9.3-next.0"
+    "@backstage/core-plugin-api" "^1.0.0"
+    "@backstage/plugin-catalog-react" "^1.0.1-next.0"
+    "@backstage/theme" "^0.2.15"
+    "@material-ui/core" "^4.12.2"
+    "@material-ui/icons" "^4.9.1"
+    "@material-ui/lab" "4.0.0-alpha.57"
+    pluralize "^8.0.0"
+    qs "^6.10.1"
+    react-router "6.0.0-beta.0"
+    react-router-dom "6.0.0-beta.0"
+    react-use "^17.2.4"
+
 "@bcoe/v8-coverage@^0.2.3":
   version "0.2.3"
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"

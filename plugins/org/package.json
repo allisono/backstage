@@ -1,5 +1,5 @@
 {
-  "name": "@tinyspeck/plugin-org",
+  "name": "@allisono/plugin-org",
   "description": "A Backstage plugin that helps you create entity pages for your organization",
   "version": "0.5.8",
   "main": "src/index.ts",
@@ -55,5 +55,10 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://slack-github.com/allisono/backstage/"
+  },
+  "author": ""
 }
